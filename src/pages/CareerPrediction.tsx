@@ -1,5 +1,6 @@
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
+import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -15,6 +16,7 @@ const roles = [
 export default function CareerPredictionPage() {
   return (
     <div className="page-container">
+      <div className="mb-6"><BackButton /></div>
       <PageHeader icon={<TrendingUp className="h-7 w-7" />} title="Career Prediction" subtitle="Discover the best career roles based on your skills and experience." />
 
       <div className="max-w-3xl mx-auto space-y-4">
