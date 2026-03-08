@@ -108,21 +108,13 @@ export function AppSidebar() {
           {!collapsed && <span>{dark ? "Light Mode" : "Dark Mode"}</span>}
         </button>
 
-        {user ? (
+        {user && (
           <button
             onClick={() => { signOut(); handleNavClick(); }}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
           >
             <LogOut className="h-4 w-4 shrink-0" />
             {!collapsed && <span>Sign Out</span>}
-          </button>
-        ) : (
-          <button
-            onClick={() => { navigate("/auth"); handleNavClick(); }}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium gradient-btn w-full"
-          >
-            <LogIn className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>Sign In</span>}
           </button>
         )}
       </SidebarFooter>
