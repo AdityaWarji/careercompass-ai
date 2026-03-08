@@ -409,8 +409,8 @@ export default function CareerRoadmapPage() {
       {!selectedCareer && !loadingRoadmap && (
         <div className="max-w-5xl mx-auto">
           {/* Search bar with real-time AI dropdown */}
-          <AnimatedSection>
-            <div className="glass-card rounded-2xl p-5 mb-6 overflow-visible">
+          <AnimatedSection className="relative z-[60]" >
+            <div className="glass-card rounded-2xl p-5 mb-6" style={{ overflow: 'visible' }}>
               <div className="flex flex-col gap-4 overflow-visible">
                 <div className="relative z-50" ref={searchRef}>
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
