@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Brain, Loader2, Play, ChevronRight, Clock, Target, Award, CheckCircle, AlertTriangle, Lightbulb, BarChart3, Send, RotateCcw, ArrowRight, Sparkles, Trophy, TrendingUp, MessageSquare, FileText, Zap, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
@@ -114,10 +114,46 @@ export default function InterviewCoachPage() {
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [report, setReport] = useState<Report | null>(null);
   const [showModelAnswer, setShowModelAnswer] = useState(false);
+  const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
+  const [showRoleSuggestions, setShowRoleSuggestions] = useState(false);
+  const [loadingRoleSuggestions, setLoadingRoleSuggestions] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+  const roleDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Role autocomplete
+  const fetchRoleSuggestions = useCallback(async (query: string) => {
+    if (query.length < 2) { setRoleSuggestions([]); return; }
+    setLoadingRoleSuggestions(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("career-prediction", {
+        body: { skills: [query], action: "suggest_skills" },
+      });
+      if (!error && data?.suggestions) {
+        setRoleSuggestions(data.suggestions);
+        setShowRoleSuggestions(data.suggestions.length > 0);
+      }
+    } catch {} finally { setLoadingRoleSuggestions(false); }
+  }, []);
+
+  useEffect(() => {
+    if (roleDebounceRef.current) clearTimeout(roleDebounceRef.current);
+    if (role.trim().length >= 2 && !popularRoles.includes(role)) {
+      roleDebounceRef.current = setTimeout(() => fetchRoleSuggestions(role.trim()), 400);
+    } else { setRoleSuggestions([]); setShowRoleSuggestions(false); }
+    return () => { if (roleDebounceRef.current) clearTimeout(roleDebounceRef.current); };
+  }, [role, fetchRoleSuggestions]);
+
+  useEffect(() => {
+    const h = (e: MouseEvent) => {
+      if (roleDropdownRef.current && !roleDropdownRef.current.contains(e.target as Node)) setShowRoleSuggestions(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
 
   // Timer
   useEffect(() => {
@@ -269,13 +305,43 @@ export default function InterviewCoachPage() {
                 <Target className="h-5 w-5 text-primary" /> Target Role
               </h3>
               <p className="text-muted-foreground text-sm mb-4">What position are you interviewing for?</p>
-              <input
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                placeholder="e.g. Senior Software Engineer"
-                className="w-full rounded-xl bg-muted p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 mb-3"
-              />
-              <div className="flex flex-wrap gap-2">
+              <div className="relative" ref={roleDropdownRef}>
+                <input
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  onFocus={() => { if (roleSuggestions.length > 0) setShowRoleSuggestions(true); }}
+                  placeholder="e.g. Senior Software Engineer"
+                  className="w-full rounded-xl bg-muted p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                {loadingRoleSuggestions && (
+                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+                )}
+                <AnimatePresence>
+                  {showRoleSuggestions && roleSuggestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="absolute z-50 top-full left-0 right-0 mt-1 rounded-xl glass-card border border-border overflow-hidden shadow-lg"
+                    >
+                      {roleSuggestions.map((s, i) => (
+                        <motion.button
+                          key={s}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.03 }}
+                          onClick={() => { setRole(s); setShowRoleSuggestions(false); }}
+                          className="w-full text-left px-4 py-2.5 text-sm hover:bg-accent/80 transition-colors flex items-center gap-2 border-b border-border/50 last:border-0"
+                        >
+                          <Sparkles className="h-3 w-3 text-primary shrink-0" />
+                          {s}
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
                 {popularRoles.map((r) => (
                   <button
                     key={r}
