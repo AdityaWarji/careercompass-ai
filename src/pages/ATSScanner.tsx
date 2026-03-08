@@ -101,6 +101,8 @@ export default function ATSScannerPage() {
   const handleReset = () => {
     setFile(null);
     setResumeText("");
+    setFileBase64(null);
+    setFileName(null);
     setJobDesc("");
     setResult(null);
     setStep("upload");
