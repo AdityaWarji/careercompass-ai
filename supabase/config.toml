@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.career-prediction]
 verify_jwt = false
+
+[functions.linkedin-analyzer]
+verify_jwt = false
