@@ -114,8 +114,13 @@ export default function InterviewCoachPage() {
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [report, setReport] = useState<Report | null>(null);
   const [showModelAnswer, setShowModelAnswer] = useState(false);
+  const [roleSuggestions, setRoleSuggestions] = useState<string[]>([]);
+  const [showRoleSuggestions, setShowRoleSuggestions] = useState(false);
+  const [loadingRoleSuggestions, setLoadingRoleSuggestions] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const roleDropdownRef = useRef<HTMLDivElement>(null);
+  const roleDebounceRef = useRef<ReturnType<typeof setTimeout>>();
   const { toast } = useToast();
   const { user } = useAuth();
 
