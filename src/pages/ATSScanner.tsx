@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveActivity } from "@/lib/saveActivity";
+import { sendNotification } from "@/lib/sendNotification";
 
 interface ATSResult {
   score: number;
