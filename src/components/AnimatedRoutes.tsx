@@ -1,7 +1,9 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
+import AuthGuard from "./AuthGuard";
 import Index from "@/pages/Index";
+import AuthPage from "@/pages/Auth";
 import ResumeAnalyzer from "@/pages/ResumeAnalyzer";
 import ATSScanner from "@/pages/ATSScanner";
 import CareerPrediction from "@/pages/CareerPrediction";
@@ -18,6 +20,7 @@ import NotFound from "@/pages/NotFound";
 
 const routes = [
   { path: "/", element: <Index /> },
+  { path: "/auth", element: <AuthPage /> },
   { path: "/reset-password", element: <ResetPassword /> },
   { path: "/resume-analyzer", element: <ResumeAnalyzer /> },
   { path: "/ats-scanner", element: <ATSScanner /> },
@@ -37,16 +40,18 @@ export default function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {routes.map(({ path, element }) => (
-          <Route
-            key={path}
-            path={path}
-            element={<PageTransition>{element}</PageTransition>}
-          />
-        ))}
-      </Routes>
-    </AnimatePresence>
+    <AuthGuard>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {routes.map(({ path, element }) => (
+            <Route
+              key={path}
+              path={path}
+              element={<PageTransition>{element}</PageTransition>}
+            />
+          ))}
+        </Routes>
+      </AnimatePresence>
+    </AuthGuard>
   );
 }
