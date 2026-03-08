@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileText, TrendingUp, Brain, Map, Search, Compass, ArrowRight, Clock, Mic, Linkedin, Sparkles, Zap, Activity } from "lucide-react";
+import { LayoutDashboard, FileText, TrendingUp, Brain, Map, Search, Compass, ArrowRight, Clock, Mic, Linkedin, Sparkles, Zap, Activity, Target, Shield } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Cell } from "recharts";
 
 // ... keep existing code (quickLinks, AnimatedScoreCircle)
 const quickLinks = [
