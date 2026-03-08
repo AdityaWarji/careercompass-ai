@@ -185,10 +185,11 @@ const extractExplicitSkillsFromEvidence = (evidenceText: string) => {
     }
   }
 
+  const allowedTokens = new Set(SKILL_CANDIDATES.map((candidate) => canonicalToken(candidate)));
   const hashtagSkills = Array.from(evidenceText.matchAll(/#([a-zA-Z][a-zA-Z0-9]+)/g))
-    .map((m) => m[1])
-    .filter((tag) => tag.length > 2 && tag.length < 25)
-    .map((tag) => canonicalDisplaySkill(canonicalToken(tag)));
+    .map((m) => canonicalToken(m[1]))
+    .filter((token) => token.length > 2 && token.length < 25 && allowedTokens.has(token))
+    .map((token) => canonicalDisplaySkill(token));
 
   for (const tagSkill of hashtagSkills) found.add(tagSkill);
 
