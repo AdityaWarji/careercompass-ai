@@ -137,7 +137,7 @@ export default function HomePage() {
 
             <TextReveal>
               <motion.h1
-                className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-[1.05] tracking-tight"
+                className="font-display text-3xl sm:text-5xl lg:text-7xl font-bold text-primary-foreground mb-4 sm:mb-6 leading-[1.1] tracking-tight"
               >
                 Your AI-Powered
                 <br />
