@@ -79,6 +79,15 @@ function FeatureCard({ f, i }: { f: typeof features[0]; i: number }) {
 }
 
 export default function HomePage() {
+  const { data: platformStats } = usePlatformStats();
+
+  const stats = [
+    { value: `${platformStats?.resumes_analyzed ?? 0}`, label: "Resumes Analyzed", icon: FileText },
+    { value: `${platformStats?.ats_scans ?? 0}`, label: "ATS Scans", icon: Search },
+    { value: `${platformStats?.interview_sessions ?? 0}`, label: "Interviews", icon: Brain },
+    { value: `${platformStats?.total_users ?? 0}`, label: "Users", icon: Users },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
