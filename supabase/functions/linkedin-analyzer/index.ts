@@ -59,9 +59,15 @@ serve(async (req) => {
             { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
+
+        // Graceful fallback (not an exception) so frontend can switch to manual mode
         return new Response(
-          JSON.stringify({ error: "Could not search for profile. Please paste your profile content manually instead." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({
+            success: false,
+            showManualInput: true,
+            error: "Could not fetch enough public profile data from URL. Please paste your profile content below.",
+          }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
@@ -78,12 +84,14 @@ serve(async (req) => {
         .join("\n\n---\n\n");
 
       if (gathered.length < 50) {
+        // Graceful fallback (not an exception) so frontend can switch to manual mode
         return new Response(
-          JSON.stringify({ 
-            error: "Could not find enough public information for this LinkedIn profile. LinkedIn limits public access to profiles. Please paste your profile content using the manual input option below.",
-            showManualInput: true 
+          JSON.stringify({
+            success: false,
+            showManualInput: true,
+            error: "LinkedIn limits public access to profiles. Please paste your profile content using the manual input option below.",
           }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
