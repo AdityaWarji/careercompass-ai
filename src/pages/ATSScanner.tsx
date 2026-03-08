@@ -20,26 +20,45 @@ interface ATSResult {
 export default function ATSScannerPage() {
   const [jobDesc, setJobDesc] = useState("");
   const [resumeText, setResumeText] = useState("");
+  const [fileBase64, setFileBase64] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ATSResult | null>(null);
   const [step, setStep] = useState<"upload" | "jobdesc">("upload");
+  const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
   const handleFile = (f: File | null) => {
     if (!f) return;
     setFile(f);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setResumeText(e.target?.result as string);
-      setStep("jobdesc");
-    };
-    reader.readAsText(f);
+    const isBinary = /\.(pdf|doc|docx)$/i.test(f.name);
+
+    if (isBinary) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = (e.target?.result as string).split(",")[1];
+        setFileBase64(base64);
+        setFileName(f.name);
+        setResumeText("__file_uploaded__");
+        setStep("jobdesc");
+      };
+      reader.readAsDataURL(f);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setResumeText(e.target?.result as string);
+        setStep("jobdesc");
+      };
+      reader.readAsText(f);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
     handleFile(e.dataTransfer.files?.[0] || null);
   };
 
