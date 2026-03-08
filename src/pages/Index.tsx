@@ -153,7 +153,7 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-primary-foreground/60 text-lg sm:text-xl max-w-xl mx-auto mb-12 leading-relaxed"
+              className="text-primary-foreground/60 text-base sm:text-lg lg:text-xl max-w-xl mx-auto mb-8 sm:mb-12 leading-relaxed px-2"
             >
               Analyze resumes, predict career paths, and ace interviews — all powered by cutting-edge AI.
             </motion.p>
