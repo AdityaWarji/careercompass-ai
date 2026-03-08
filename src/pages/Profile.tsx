@@ -34,7 +34,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) {
-      navigate("/auth");
+      navigate("/");
       return;
     }
     fetchProfile();

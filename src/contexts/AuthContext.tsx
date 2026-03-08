@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Use setTimeout to avoid blocking the auth state update
         setTimeout(() => {
           const currentPath = window.location.pathname;
-          if (currentPath === "/auth" || currentPath === "/") {
+          if (currentPath === "/") {
             window.location.href = "/dashboard";
           }
         }, 100);
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/auth";
+    window.location.href = "/";
   };
 
   return (
