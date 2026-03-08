@@ -142,20 +142,25 @@ export default function ATSScannerPage() {
       {step === "upload" && !result && !loading && (
         <AnimatedSection className="max-w-2xl mx-auto space-y-5">
           <div
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
+            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
             onDrop={handleDrop}
-            className="relative glass-card rounded-3xl p-16 text-center cursor-pointer card-hover border-2 border-dashed border-border hover:border-primary/40 transition-all group"
+            onClick={() => { const input = document.getElementById("ats-file-input") as HTMLInputElement; input?.click(); }}
+            className={`relative glass-card rounded-3xl p-16 text-center cursor-pointer card-hover border-2 border-dashed transition-all group ${
+              isDragging ? "border-primary bg-primary/5 scale-[1.02]" : "border-border hover:border-primary/40"
+            }`}
           >
             <input
+              id="ats-file-input"
               type="file"
               accept=".pdf,.txt,.doc,.docx"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={(e) => handleFile(e.target.files?.[0] || null)}
+              className="hidden"
+              onChange={(e) => { handleFile(e.target.files?.[0] || null); e.target.value = ""; }}
             />
-            <div className="w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+            <div className={`w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center mx-auto mb-5 transition-transform ${isDragging ? "scale-125" : "group-hover:scale-110"}`}>
               <Upload className="h-8 w-8" />
             </div>
-            <h3 className="font-display font-semibold text-xl mb-2">Drag & Drop your Resume</h3>
+            <h3 className="font-display font-semibold text-xl mb-2">{isDragging ? "Drop your file here!" : "Drag & Drop your Resume"}</h3>
             <p className="text-muted-foreground text-sm mb-4">or click to browse files</p>
             <span className="inline-block px-3 py-1 rounded-lg bg-accent text-accent-foreground text-xs font-medium">TXT, PDF, DOC supported</span>
           </div>
