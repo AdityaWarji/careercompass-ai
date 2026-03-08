@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Star, Shield, Zap, ChevronRight, Heart, Globe } from "lucide-react";
+import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Star, Shield, Zap, ChevronRight, Heart, Globe, Users, Activity } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TextReveal from "@/components/TextReveal";
 import TypingText from "@/components/TypingText";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import MagneticButton from "@/components/MagneticButton";
+import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useRef } from "react";
 
 const features = [
@@ -22,13 +23,6 @@ const steps = [
   { icon: Sparkles, num: "02", title: "ATS Scan", desc: "Check your resume against job descriptions for ATS compatibility", link: "/ats-scanner" },
   { icon: Target, num: "03", title: "Career Insights", desc: "Explore career paths, skill roadmaps & predictions", link: "/career-roadmap" },
   { icon: GraduationCap, num: "04", title: "Interview Prep", desc: "Practice with AI-powered mock interviews", link: "/interview-coach" },
-];
-
-const stats = [
-  { value: "50K+", label: "Resumes Analyzed", icon: FileText },
-  { value: "95%", label: "User Satisfaction", icon: Star },
-  { value: "200+", label: "Career Paths", icon: Target },
-  { value: "24/7", label: "AI Available", icon: Zap },
 ];
 
 function FeatureCard({ f, i }: { f: typeof features[0]; i: number }) {
