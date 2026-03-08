@@ -435,7 +435,13 @@ export default function InterviewCoachPage() {
           <div className="glass-card rounded-2xl p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Question {currentIndex + 1} of {questions.length}</span>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={endInterviewEarly}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors flex items-center gap-1.5"
+                >
+                  <XCircle className="h-3.5 w-3.5" /> End Interview
+                </button>
                 <span className={`flex items-center gap-1.5 text-sm font-mono font-bold ${timeLeft < 30 ? "text-red-500" : "text-muted-foreground"}`}>
                   <Clock className="h-4 w-4" /> {formatTime(timeLeft)}
                 </span>
