@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Brain, Loader2, Play, ChevronRight, Clock, Target, Award, CheckCircle, AlertTriangle, Lightbulb, BarChart3, Send, RotateCcw, ArrowRight, Sparkles, Trophy, TrendingUp, MessageSquare, FileText, Zap } from "lucide-react";
+import { Brain, Loader2, Play, ChevronRight, Clock, Target, Award, CheckCircle, AlertTriangle, Lightbulb, BarChart3, Send, RotateCcw, ArrowRight, Sparkles, Trophy, TrendingUp, MessageSquare, FileText, Zap, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
@@ -224,6 +224,15 @@ export default function InterviewCoachPage() {
     }
   };
 
+  const endInterviewEarly = () => {
+    setIsTimerRunning(false);
+    if (results.length > 0) {
+      generateReport();
+    } else {
+      toast({ title: "No answers yet", description: "Answer at least one question before ending.", variant: "destructive" });
+    }
+  };
+
   const resetAll = () => {
     setPhase("setup");
     setQuestions([]);
@@ -426,7 +435,13 @@ export default function InterviewCoachPage() {
           <div className="glass-card rounded-2xl p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Question {currentIndex + 1} of {questions.length}</span>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={endInterviewEarly}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors flex items-center gap-1.5"
+                >
+                  <XCircle className="h-3.5 w-3.5" /> End Interview
+                </button>
                 <span className={`flex items-center gap-1.5 text-sm font-mono font-bold ${timeLeft < 30 ? "text-red-500" : "text-muted-foreground"}`}>
                   <Clock className="h-4 w-4" /> {formatTime(timeLeft)}
                 </span>
@@ -573,44 +588,123 @@ export default function InterviewCoachPage() {
             </AnimatePresence>
           </div>
 
-          {/* Next Button */}
-          <button onClick={nextQuestion} className="w-full gradient-btn py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2">
-            {currentIndex + 1 >= questions.length ? (
-              <><Trophy className="h-5 w-5" /> View Final Report</>
-            ) : (
-              <><ArrowRight className="h-5 w-5" /> Next Question ({currentIndex + 2}/{questions.length})</>
+          {/* Actions */}
+          <div className="flex gap-3">
+            {currentIndex + 1 < questions.length && (
+              <button onClick={endInterviewEarly} className="flex-1 py-3 rounded-2xl font-semibold text-sm bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors flex items-center justify-center gap-2">
+                <XCircle className="h-4 w-4" /> End Interview
+              </button>
             )}
-          </button>
+            <button onClick={nextQuestion} className="flex-1 gradient-btn py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2">
+              {currentIndex + 1 >= questions.length ? (
+                <><Trophy className="h-5 w-5" /> View Final Report</>
+              ) : (
+                <><ArrowRight className="h-5 w-5" /> Next Question ({currentIndex + 2}/{questions.length})</>
+              )}
+            </button>
+          </div>
         </motion.div>
       )}
 
       {/* ──── REPORT PHASE ──── */}
       {phase === "report" && report && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6">
-          {/* Header */}
-          <div className="glass-card rounded-3xl p-8 sm:p-10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, hsla(258,90%,62%,0.3), transparent)" }} />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto space-y-6">
+          {/* Celebration Header */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, type: "spring", bounce: 0.4 }}
+            className="text-center mb-4"
+          >
+            <motion.div
+              className="text-6xl mb-4"
+              animate={{ rotate: [0, -10, 10, -10, 0], scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, delay: 0.3 }}
+            >
+              {report.overallScore >= 80 ? "🏆" : report.overallScore >= 60 ? "⭐" : "💪"}
+            </motion.div>
+            <motion.h2
+              className="font-display font-bold text-3xl gradient-text mb-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              Interview Complete!
+            </motion.h2>
+            <motion.p
+              className="text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              Here's your detailed performance breakdown
+            </motion.p>
+          </motion.div>
+
+          {/* Score Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, type: "spring" }}
+            className="glass-card rounded-3xl p-8 sm:p-10 relative overflow-hidden"
+          >
+            <motion.div
+              className="absolute inset-0 opacity-5"
+              style={{ background: "var(--gradient-primary)" }}
+              animate={{ opacity: [0.03, 0.08, 0.03] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            />
             <div className="flex flex-col sm:flex-row items-center gap-8 relative">
-              <ScoreCircle score={report.overallScore} size={170} />
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.7, duration: 0.8, type: "spring", bounce: 0.3 }}
+              >
+                <ScoreCircle score={report.overallScore} size={170} />
+              </motion.div>
               <div className="flex-1 text-center sm:text-left">
-                <h3 className="font-display font-bold text-2xl mb-2">Interview Performance Report</h3>
-                <p className="text-muted-foreground text-sm mb-3">{role}{company && company !== "Any Company" ? ` at ${company}` : ""} • {interviewType} Interview</p>
-                <div className="flex flex-wrap gap-2">
+                <motion.h3
+                  className="font-display font-bold text-2xl mb-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.9 }}
+                >
+                  Interview Performance Report
+                </motion.h3>
+                <motion.p
+                  className="text-muted-foreground text-sm mb-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                >
+                  {role}{company && company !== "Any Company" ? ` at ${company}` : ""} • {interviewType} Interview • {results.length} questions answered
+                </motion.p>
+                <motion.div
+                  className="flex flex-wrap gap-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1 }}
+                >
                   <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${readinessColors[report.readinessLevel] || "bg-muted text-muted-foreground"}`}>
                     {report.readinessLevel}
                   </span>
                   <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${ratingColors[report.overallRating] || ""} bg-muted`}>
                     {report.overallRating}
                   </span>
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Summary */}
-          <div className="glass-card rounded-2xl p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+            className="glass-card rounded-2xl p-6"
+          >
             <p className="text-sm leading-relaxed">{report.summary}</p>
-          </div>
+          </motion.div>
 
           {/* Strengths, Improvements, Recommendations */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -618,60 +712,93 @@ export default function InterviewCoachPage() {
               { title: "Top Strengths", items: report.topStrengths, icon: Trophy, color: "hsl(142,71%,45%)" },
               { title: "Areas to Improve", items: report.areasToImprove, icon: TrendingUp, color: "hsl(25,95%,53%)" },
               { title: "Recommendations", items: report.recommendations, icon: Lightbulb, color: "hsl(258,90%,62%)" },
-            ].map((section) => (
-              <div key={section.title} className="glass-card rounded-2xl p-5">
+            ].map((section, si) => (
+              <motion.div
+                key={section.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.3 + si * 0.15, type: "spring" }}
+                className="glass-card rounded-2xl p-5 card-hover"
+              >
                 <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
                   <section.icon className="h-4 w-4" style={{ color: section.color }} /> {section.title}
                 </h4>
                 <ul className="space-y-2">
                   {section.items.map((item, i) => (
-                    <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.5 + si * 0.15 + i * 0.1 }}
+                      className="text-sm text-muted-foreground flex items-start gap-2"
+                    >
                       <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: section.color }} />
                       {item}
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Question Results */}
-          <div className="glass-card rounded-2xl p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.8 }}
+            className="glass-card rounded-2xl p-6"
+          >
             <h4 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-primary" /> Question-by-Question Results
             </h4>
             <div className="space-y-3">
               {results.map((r, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-muted/50">
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 2 + i * 0.1 }}
+                  className="flex items-center gap-4 p-3 rounded-xl bg-muted/50 hover:bg-accent/30 transition-colors"
+                >
                   <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{r.question.question}</p>
                     <span className="text-xs text-muted-foreground">{r.question.category} • {r.question.difficulty}</span>
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="font-bold text-lg">{r.evaluation.score}</span>
+                    <span className={`font-bold text-lg ${r.evaluation.score >= 80 ? "text-emerald-500" : r.evaluation.score >= 60 ? "text-amber-500" : "text-red-500"}`}>{r.evaluation.score}</span>
                     <span className="text-xs text-muted-foreground">/100</span>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Next Steps */}
-          <div className="glass-card rounded-2xl p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.3 }}
+            className="glass-card rounded-2xl p-6"
+          >
             <h4 className="font-display font-semibold mb-3 flex items-center gap-2"><ArrowRight className="h-5 w-5 text-primary" /> Next Steps</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">{report.nextSteps}</p>
-          </div>
+          </motion.div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.5 }}
+            className="flex flex-col sm:flex-row gap-3 pt-2"
+          >
             <button onClick={resetAll} className="flex-1 py-3 rounded-2xl font-semibold text-sm bg-muted text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2">
               <RotateCcw className="h-4 w-4" /> Practice Again
             </button>
-            <button onClick={() => { resetAll(); }} className="flex-1 py-3 rounded-2xl font-semibold text-sm gradient-btn flex items-center justify-center gap-2">
+            <button onClick={resetAll} className="flex-1 py-3 rounded-2xl font-semibold text-sm gradient-btn flex items-center justify-center gap-2">
               <Brain className="h-4 w-4" /> New Interview
             </button>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </div>
