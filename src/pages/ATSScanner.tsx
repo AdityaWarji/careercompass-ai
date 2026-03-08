@@ -389,9 +389,6 @@ export default function ATSScannerPage() {
               <button onClick={handleReset} className="flex-1 py-3 rounded-2xl font-semibold text-sm bg-muted text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2">
                 <Upload className="h-4 w-4" /> Scan Another Resume
               </button>
-              <a href="/resume-analyzer" className="flex-1 py-3 rounded-2xl font-semibold text-sm gradient-btn text-center flex items-center justify-center gap-2">
-                Analyze Resume →
-              </a>
             </div>
           </motion.div>
         )}
