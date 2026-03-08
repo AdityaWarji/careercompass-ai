@@ -19,6 +19,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+interface ApplyLink {
+  platform: string;
+  url: string;
+}
+
 interface LiveJob {
   title: string;
   company: string;
@@ -27,6 +32,7 @@ interface LiveJob {
   posted: string;
   salary: string;
   link: string;
+  apply_links: ApplyLink[];
   thumbnail: string;
 }
 
