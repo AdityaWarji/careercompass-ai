@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Brain, Loader2, Play, ChevronRight, Clock, Target, Award, CheckCircle, AlertTriangle, Lightbulb, BarChart3, Send, RotateCcw, ArrowRight, Sparkles, Trophy, TrendingUp, MessageSquare, FileText, Zap, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
