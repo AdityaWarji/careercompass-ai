@@ -158,6 +158,8 @@ export default function CareerPredictionPage() {
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [liveJobs, setLiveJobs] = useState<LiveJob[]>([]);
+  const [totalJobsFound, setTotalJobsFound] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
