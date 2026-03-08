@@ -357,7 +357,7 @@ export default function CareerPredictionPage() {
                     className="w-full text-left p-5 flex items-center gap-4"
                   >
                     <div className="relative shrink-0">
-                      <ScoreCircle score={p.match} size={56} strokeWidth={4} />
+                      <ScoreCircle score={p.match} size={56} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
