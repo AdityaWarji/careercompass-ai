@@ -12,6 +12,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveActivity } from "@/lib/saveActivity";
+import { sendNotification } from "@/lib/sendNotification";
 import {
   Dialog,
   DialogContent,
@@ -250,6 +251,15 @@ export default function CareerPredictionPage() {
           summary: `Top match: ${data.predictions?.[0]?.role || "N/A"}`,
           resultData: { skills, predictions: data.predictions },
         });
+        const topRole = data.predictions?.[0]?.role || "your skills";
+        const jobCount = data.total_jobs_found || 0;
+        sendNotification(
+          user.id,
+          `🎯 ${jobCount} Jobs Found for ${topRole}`,
+          `We found ${jobCount} live job openings matching your skills. Top match: ${topRole} (${data.predictions?.[0]?.match || 0}% fit).`,
+          "job_match",
+          "/career-prediction"
+        );
       }
     } catch (e: any) {
       toast({ title: "❌ Prediction failed", description: e.message || "Something went wrong.", variant: "destructive" });

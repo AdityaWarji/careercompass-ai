@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveActivity } from "@/lib/saveActivity";
+import { sendNotification } from "@/lib/sendNotification";
 
 interface ResumeResult {
   score: number;
@@ -58,6 +59,13 @@ export default function ResumeAnalyzerPage() {
           score: data.result.score,
           resultData: data.result,
         });
+        sendNotification(
+          user.id,
+          "Resume Analysis Complete",
+          `Your resume scored ${data.result.score}/100 with ${data.result.skills?.length || 0} skills detected.`,
+          "analysis",
+          "/resume-analyzer"
+        );
       }
     } catch (e: any) {
       console.error(e);

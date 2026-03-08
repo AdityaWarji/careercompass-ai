@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import HeaderNav from "@/components/HeaderNav";
 import { useAuth } from "@/contexts/AuthContext";
 import GreetingBadge from "@/components/GreetingBadge";
+import NotificationBell from "@/components/NotificationBell";
 import Index from "./pages/Index";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ATSScanner from "./pages/ATSScanner";
@@ -48,6 +49,7 @@ const App = () => (
                   </div>
                   <div className="flex items-center gap-3">
                     <GreetingBadge />
+                    <NotificationBell />
                     <HeaderNav />
                   </div>
                 </header>
