@@ -55,10 +55,10 @@ export default function CareerPredictionPage() {
   const { user } = useAuth();
 
   const loadingSteps = [
-    { text: "Analyzing your skill set...", icon: Sparkles },
-    { text: "Matching with Indian job market...", icon: Briefcase },
-    { text: "Calculating compatibility scores...", icon: BarChart3 },
-    { text: "Generating career predictions...", icon: TrendingUp },
+    { text: "Searching Google for job market data...", icon: Sparkles },
+    { text: "Analyzing real-time salary trends...", icon: DollarSign },
+    { text: "Finding top hiring companies in India...", icon: Building2 },
+    { text: "Generating grounded career predictions...", icon: TrendingUp },
   ];
 
   // Fetch AI autocomplete suggestions
