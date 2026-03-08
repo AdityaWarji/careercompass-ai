@@ -247,6 +247,68 @@
     animation: shimmer-slide 3s ease-in-out infinite;
   }
 
+  /* Aurora glow background */
+  .aurora-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  .aurora-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg at 50% 50%, hsla(258, 90%, 62%, 0.08), hsla(220, 70%, 55%, 0.06), hsla(180, 70%, 55%, 0.04), hsla(258, 90%, 62%, 0.08));
+    animation: aurora-spin 12s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Neon text glow */
+  .neon-text {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.5), 0 0 30px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.15);
+  }
+
+  /* Animated border gradient card */
+  .border-glow-card {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .border-glow-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1.5px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)), hsl(180, 70%, 55%), hsl(var(--primary)));
+    background-size: 300% 300%;
+    animation: gradient-shift 4s ease infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+  .border-glow-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Pulsing dot */
+  .pulse-dot {
+    position: relative;
+  }
+  .pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    opacity: 0;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
   /* Magnetic hover for buttons */
   .magnetic-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -355,6 +417,18 @@
   @keyframes subtle-bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
+  }
+  @keyframes aurora-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  @keyframes text-glow {
+    0%, 100% { text-shadow: 0 0 10px hsl(var(--primary) / 0.3); }
+    50% { text-shadow: 0 0 20px hsl(var(--primary) / 0.6), 0 0 40px hsl(var(--primary) / 0.3); }
   }
   .animate-float {
     animation: float 6s ease-in-out infinite;

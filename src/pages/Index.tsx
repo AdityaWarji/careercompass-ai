@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Star, Shield, Zap, ChevronRight } from "lucide-react";
+import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Star, Shield, Zap, ChevronRight, Heart, Globe } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import TextReveal from "@/components/TextReveal";
+import TypingText from "@/components/TypingText";
+import AnimatedCounter from "@/components/AnimatedCounter";
+import MagneticButton from "@/components/MagneticButton";
 import { useRef } from "react";
 
 const features = [
@@ -128,23 +132,19 @@ export default function HomePage() {
               <Sparkles className="h-3.5 w-3.5 text-purple-300 animate-pulse" />
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.7 }}
-              className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-[1.05] tracking-tight"
-            >
-              Your AI-Powered
-              <br />
-              <motion.span
-                className="bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent inline-block"
-                animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                style={{ backgroundSize: "200% auto" }}
+            <TextReveal>
+              <motion.h1
+                className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-[1.05] tracking-tight"
               >
-                Career Engine
-              </motion.span>
-            </motion.h1>
+                Your AI-Powered
+                <br />
+                <TypingText
+                  words={["Career Engine", "Resume Analyzer", "Interview Coach", "Skill Navigator"]}
+                  className="bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 bg-clip-text text-transparent"
+                  interval={2500}
+                />
+              </motion.h1>
+            </TextReveal>
 
             <motion.p
               initial={{ opacity: 0 }}
@@ -161,21 +161,25 @@ export default function HomePage() {
               transition={{ delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link
-                to="/resume-analyzer"
-                className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 text-primary-foreground font-semibold shadow-[0_8px_30px_-6px_hsla(258,90%,62%,0.5)] hover:shadow-[0_16px_50px_-6px_hsla(258,90%,62%,0.6)] hover:-translate-y-1 transition-all duration-300 shimmer"
-              >
-                <Sparkles className="h-4 w-4" /> Analyze My Resume <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
-              </Link>
-              <a
-                href="#features"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border border-primary-foreground/15 text-primary-foreground/80 font-semibold backdrop-blur-sm hover:bg-primary-foreground/5 hover:border-primary-foreground/25 transition-all duration-300"
-              >
-                Explore Features
-              </a>
+              <MagneticButton strength={0.2}>
+                <Link
+                  to="/resume-analyzer"
+                  className="group inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 text-primary-foreground font-semibold shadow-[0_8px_30px_-6px_hsla(258,90%,62%,0.5)] hover:shadow-[0_16px_50px_-6px_hsla(258,90%,62%,0.6)] hover:-translate-y-1 transition-all duration-300 shimmer"
+                >
+                  <Sparkles className="h-4 w-4" /> Analyze My Resume <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                </Link>
+              </MagneticButton>
+              <MagneticButton strength={0.2}>
+                <a
+                  href="#features"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border border-primary-foreground/15 text-primary-foreground/80 font-semibold backdrop-blur-sm hover:bg-primary-foreground/5 hover:border-primary-foreground/25 transition-all duration-300"
+                >
+                  Explore Features
+                </a>
+              </MagneticButton>
             </motion.div>
 
-            {/* Stats bar */}
+            {/* Stats bar with animated counters */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -188,9 +192,12 @@ export default function HomePage() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9 + i * 0.1 }}
-                  className="text-center px-4 py-3 rounded-xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10"
+                  whileHover={{ scale: 1.05, borderColor: "hsla(258, 90%, 62%, 0.3)" }}
+                  className="text-center px-4 py-3 rounded-xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 transition-colors"
                 >
-                  <div className="font-display font-bold text-xl text-primary-foreground">{stat.value}</div>
+                  <div className="font-display font-bold text-xl text-primary-foreground">
+                    <AnimatedCounter value={stat.value} />
+                  </div>
                   <div className="text-primary-foreground/50 text-xs mt-0.5">{stat.label}</div>
                 </motion.div>
               ))}
@@ -201,17 +208,23 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="section-padding bg-background">
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-14">
-            <span className="floating-badge mb-4 inline-flex">
-              <Sparkles className="h-3.5 w-3.5" /> Features
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Everything You Need to <br /><span className="gradient-text">Land Your Dream Job</span>
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto text-base">Six powerful AI tools designed to accelerate your career journey.</p>
-          </AnimatedSection>
+      <section id="features" className="section-padding bg-background aurora-bg">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-14">
+            <AnimatedSection>
+              <span className="floating-badge mb-4 inline-flex">
+                <Sparkles className="h-3.5 w-3.5" /> Features
+              </span>
+            </AnimatedSection>
+            <TextReveal>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                Everything You Need to <br /><span className="gradient-text">Land Your Dream Job</span>
+              </h2>
+            </TextReveal>
+            <AnimatedSection delay={0.2}>
+              <p className="text-muted-foreground max-w-lg mx-auto text-base">Six powerful AI tools designed to accelerate your career journey.</p>
+            </AnimatedSection>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f, i) => (
@@ -280,48 +293,112 @@ export default function HomePage() {
             <motion.div
               whileHover={{ scale: 1.01 }}
               transition={{ duration: 0.3 }}
-              className="relative rounded-3xl overflow-hidden gradient-bg p-12 sm:p-16 text-center"
+              className="relative rounded-3xl overflow-hidden gradient-bg p-12 sm:p-16 text-center border-glow-card"
             >
-              {/* Animated particles */}
-              {[...Array(5)].map((_, i) => (
+              {/* Animated floating orbs */}
+              {[...Array(8)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-2 h-2 rounded-full bg-primary-foreground/10"
-                  style={{ left: `${15 + i * 18}%`, top: `${20 + i * 12}%` }}
-                  animate={{ y: [-15, 15, -15], opacity: [0.2, 0.5, 0.2] }}
-                  transition={{ duration: 3 + i, repeat: Infinity, delay: i * 0.5 }}
+                  className="absolute rounded-full"
+                  style={{
+                    width: 4 + Math.random() * 8,
+                    height: 4 + Math.random() * 8,
+                    left: `${10 + i * 11}%`,
+                    top: `${15 + (i % 3) * 25}%`,
+                    background: `hsla(${258 + i * 15}, 80%, 65%, ${0.15 + Math.random() * 0.2})`,
+                  }}
+                  animate={{
+                    y: [-20, 20, -20],
+                    x: [-5, 5, -5],
+                    opacity: [0.2, 0.6, 0.2],
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{ duration: 3 + i * 0.5, repeat: Infinity, delay: i * 0.3 }}
                 />
               ))}
               <div className="relative">
                 <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
+                  initial={{ scale: 0, rotate: -180 }}
+                  whileInView={{ scale: 1, rotate: 0 }}
                   viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 200 }}
                   className="w-16 h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-primary-foreground/10"
                 >
                   <Sparkles className="h-7 w-7 text-primary-foreground" />
                 </motion.div>
-                <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
-                  Ready to Transform <br />Your Career?
-                </h2>
-                <p className="text-primary-foreground/60 max-w-lg mx-auto mb-8 text-lg">
-                  Join thousands of professionals using AI to land their dream jobs.
-                </p>
-                <Link
-                  to="/resume-analyzer"
-                  className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground font-semibold backdrop-blur-sm hover:bg-primary-foreground/15 transition-all shimmer"
+                <TextReveal>
+                  <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
+                    Ready to Transform <br />Your Career?
+                  </h2>
+                </TextReveal>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="text-primary-foreground/60 max-w-lg mx-auto mb-8 text-lg"
                 >
-                  Get Started Free <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
-                </Link>
+                  Join thousands of professionals using AI to land their dream jobs.
+                </motion.p>
+                <MagneticButton strength={0.2}>
+                  <Link
+                    to="/resume-analyzer"
+                    className="group inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground font-semibold backdrop-blur-sm hover:bg-primary-foreground/15 transition-all shimmer"
+                  >
+                    Get Started Free <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform" />
+                  </Link>
+                </MagneticButton>
               </div>
             </motion.div>
           </AnimatedSection>
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section className="section-padding bg-muted/20">
+        <div className="max-w-5xl mx-auto">
+          <TextReveal>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-center mb-10">
+              Trusted by <span className="gradient-text">Professionals</span> Worldwide
+            </h2>
+          </TextReveal>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {[
+              { quote: "This tool transformed my job search. Got 3x more interviews!", name: "Sarah K.", role: "Software Engineer", avatar: "👩‍💻" },
+              { quote: "The ATS scanner alone saved me weeks of trial and error.", name: "James M.", role: "Product Manager", avatar: "👨‍💼" },
+              { quote: "Best AI career tool I've ever used. The interview prep is incredible.", name: "Priya S.", role: "Data Scientist", avatar: "👩‍🔬" },
+            ].map((t, i) => (
+              <AnimatedSection key={t.name} delay={i * 0.1}>
+                <motion.div
+                  whileHover={{ y: -4 }}
+                  className="glass-card-premium rounded-2xl p-6 h-full"
+                >
+                  <div className="flex gap-1 mb-3">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">"{t.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{t.avatar}</span>
+                    <div>
+                      <p className="text-sm font-semibold">{t.name}</p>
+                      <p className="text-xs text-muted-foreground">{t.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="py-12 border-t border-border/50">
-        <div className="max-w-5xl mx-auto px-4 text-center">
+      <footer className="py-12 border-t border-border/50 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30 pointer-events-none" style={{
+          background: "radial-gradient(ellipse 80% 50% at 50% 100%, hsla(258, 90%, 62%, 0.08), transparent)"
+        }} />
+        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -329,13 +406,13 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-center gap-3"
           >
-            <motion.p
-              className="text-sm text-muted-foreground tracking-wide"
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              Crafted with passion
-            </motion.p>
+            <motion.div className="flex items-center gap-1 text-sm text-muted-foreground">
+              Crafted with
+              <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                <Heart className="h-4 w-4 text-destructive fill-destructive inline" />
+              </motion.span>
+              and AI
+            </motion.div>
             <motion.h3
               className="font-display text-xl font-bold gradient-text"
               initial={{ letterSpacing: "0.3em", opacity: 0 }}
@@ -346,13 +423,22 @@ export default function HomePage() {
               Made by Aditya W
             </motion.h3>
             <motion.div
-              className="h-0.5 w-16 rounded-full"
-              style={{ background: "var(--gradient-primary)" }}
+              className="h-0.5 w-20 rounded-full"
+              style={{ background: "linear-gradient(90deg, transparent, hsl(var(--primary)), hsl(var(--secondary)), transparent)" }}
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             />
+            <motion.p
+              className="text-xs text-muted-foreground/50 mt-2"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+            >
+              © 2026 CareerCompass AI. All rights reserved.
+            </motion.p>
           </motion.div>
         </div>
       </footer>
