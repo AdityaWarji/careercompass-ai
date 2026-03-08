@@ -19,6 +19,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+interface LiveJob {
+  title: string;
+  company: string;
+  location: string;
+  via: string;
+  posted: string;
+  salary: string;
+  link: string;
+  thumbnail: string;
+}
+
 interface Prediction {
   role: string;
   match: number;
@@ -30,6 +41,8 @@ interface Prediction {
   top_companies?: string[];
   job_openings_estimate?: string;
   growth_outlook?: string;
+  live_jobs?: LiveJob[];
+  live_job_count?: number;
 }
 
 const popularSkills = [
