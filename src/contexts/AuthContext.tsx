@@ -26,12 +26,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(session);
       setLoading(false);
 
-      // After OAuth sign-in, redirect to dashboard
+      // After OAuth sign-in, redirect to dashboard immediately
       if (event === "SIGNED_IN" && session) {
-        // Use setTimeout to avoid blocking the auth state update
         setTimeout(() => {
           const currentPath = window.location.pathname;
-          if (currentPath === "/") {
+          if (currentPath === "/" || currentPath === "/auth") {
             window.location.href = "/dashboard";
           }
         }, 100);
