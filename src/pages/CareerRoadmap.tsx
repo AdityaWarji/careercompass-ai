@@ -294,6 +294,7 @@ export default function CareerRoadmapPage() {
   };
 
 
+  const selectCareer = async (career: string) => {
     setSelectedCareer(career);
     setShowDropdown(false);
     setLoadingRoadmap(true);
