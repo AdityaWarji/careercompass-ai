@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Map, Loader2, BookOpen, Youtube, ExternalLink, Award, Wrench, FolderOpen, Clock, ChevronRight, Sparkles, ArrowLeft, Search, TrendingUp } from "lucide-react";
+import { Map, Loader2, BookOpen, Youtube, ExternalLink, Award, Wrench, FolderOpen, Clock, ChevronRight, Sparkles, ArrowLeft, Search, TrendingUp, Download, MessageSquare, GraduationCap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
