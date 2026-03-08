@@ -198,7 +198,7 @@ export default function HomePage() {
                   whileHover={{ scale: 1.05, borderColor: "hsla(258, 90%, 62%, 0.3)" }}
                   className="text-center px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 transition-colors"
                 >
-                  <div className="font-display font-bold text-xl text-primary-foreground">
+                  <div className="font-display font-bold text-lg sm:text-xl text-primary-foreground">
                     <AnimatedCounter value={stat.value} />
                   </div>
                   <div className="text-primary-foreground/50 text-xs mt-0.5">{stat.label}</div>
