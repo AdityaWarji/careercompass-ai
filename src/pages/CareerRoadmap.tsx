@@ -213,104 +213,199 @@ export default function CareerRoadmapPage() {
     const doc = new jsPDF();
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentW = pageW - margin * 2;
+    const lineH = 5; // line height for font size 10
     let y = 0;
-    const checkPage = (needed: number) => { if (y + needed > pageH - 25) { doc.addPage(); drawPageBorder(); y = 25; } };
-    const drawPageBorder = () => { doc.setDrawColor(120, 80, 220); doc.setLineWidth(0.5); doc.roundedRect(8, 8, pageW - 16, pageH - 16, 3, 3); };
-    const drawSectionHeader = (title: string, emoji: string) => {
-      checkPage(18);
-      doc.setFillColor(120, 80, 220);
-      doc.roundedRect(20, y - 2, pageW - 40, 10, 2, 2, "F");
-      doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
-      doc.text(`${emoji}  ${title}`, 26, y + 5);
-      doc.setTextColor(40, 40, 40); y += 16;
+
+    const checkPage = (needed: number) => {
+      if (y + needed > pageH - 30) {
+        doc.addPage();
+        drawPageBorder();
+        y = 30;
+      }
     };
 
+    const drawPageBorder = () => {
+      doc.setDrawColor(120, 80, 220);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(8, 8, pageW - 16, pageH - 16, 3, 3);
+    };
+
+    const drawSectionHeader = (title: string, emoji: string) => {
+      checkPage(20);
+      doc.setFillColor(120, 80, 220);
+      doc.roundedRect(margin, y, contentW, 12, 2, 2, "F");
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255);
+      doc.text(`${emoji}  ${title}`, margin + 6, y + 8);
+      doc.setTextColor(40, 40, 40);
+      y += 18;
+    };
+
+    const wrapText = (text: string, maxWidth: number, fontSize: number) => {
+      doc.setFontSize(fontSize);
+      return doc.splitTextToSize(text || "", maxWidth);
+    };
+
+    // ── Title page header ──
     drawPageBorder();
-    doc.setFillColor(120, 80, 220); doc.rect(8, 8, pageW - 16, 50, "F");
-    doc.setFontSize(28); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
-    doc.text(rm.career, pageW / 2, 32, { align: "center" });
-    doc.setFontSize(13); doc.setFont("helvetica", "normal");
-    doc.text("Career Roadmap & Skill Guide", pageW / 2, 44, { align: "center" });
-    doc.setTextColor(40, 40, 40); y = 75;
+    doc.setFillColor(120, 80, 220);
+    doc.rect(8, 8, pageW - 16, 50, "F");
+    doc.setFontSize(24);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    const titleLines = wrapText(rm.career, pageW - 60, 24);
+    doc.text(titleLines, pageW / 2, 30, { align: "center" });
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text("Career Roadmap & Skill Guide", pageW / 2, 48, { align: "center" });
+    doc.setTextColor(40, 40, 40);
+    y = 72;
 
-    const overviewText = doc.splitTextToSize(rm.overview, pageW - 56);
-    const boxH = overviewText.length * 5 + 12;
-    doc.setFillColor(245, 243, 255); doc.roundedRect(20, y - 4, pageW - 40, boxH, 3, 3, "F");
-    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(60, 60, 60);
-    doc.text(overviewText, 28, y + 4); y += boxH + 10;
+    // ── Overview ──
+    const overviewLines = wrapText(rm.overview, contentW - 16, 9);
+    const overviewH = overviewLines.length * 4.5 + 14;
+    checkPage(overviewH);
+    doc.setFillColor(245, 243, 255);
+    doc.roundedRect(margin, y, contentW, overviewH, 3, 3, "F");
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    doc.text(overviewLines, margin + 8, y + 8);
+    y += overviewH + 8;
 
-    // Market insights
+    // ── Market Insights ──
     if (rm.marketInsights) {
       drawSectionHeader("Market Insights", "📊");
       const mi = rm.marketInsights;
       const insights = [
-        `Salary (USD): ${mi.averageSalaryUSD}`,
-        `Salary (INR): ${mi.averageSalaryINR}`,
-        `Demand: ${mi.demandLevel} | Growth: ${mi.growthRate}`,
-        `Top Companies: ${mi.topHiringCompanies?.join(", ")}`,
+        `Salary (USD): ${mi.averageSalaryUSD || "N/A"}`,
+        `Salary (INR): ${mi.averageSalaryINR || "N/A"}`,
+        `Demand: ${mi.demandLevel || "N/A"}  |  Growth: ${mi.growthRate || "N/A"}`,
+        `Top Companies: ${(mi.topHiringCompanies || []).join(", ") || "N/A"}`,
       ];
-      insights.forEach(text => {
-        checkPage(8);
-        doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(60, 60, 60);
-        doc.text(text, 28, y + 3); y += 7;
+      insights.forEach((text) => {
+        const lines = wrapText(text, contentW - 20, 9);
+        const h = lines.length * 4.5 + 2;
+        checkPage(h);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(60, 60, 60);
+        doc.text(lines, margin + 8, y + 3);
+        y += h + 2;
       });
-      y += 6;
+      y += 4;
     }
 
+    // ── Required Skills ──
     drawSectionHeader("Required Skills", "⚡");
     rm.requiredSkills.forEach((sk, i) => {
-      checkPage(16);
-      if (i % 2 === 0) { doc.setFillColor(250, 248, 255); doc.roundedRect(22, y - 3, pageW - 44, 12, 1.5, 1.5, "F"); }
-      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 30, 120); doc.text(sk.name, 28, y + 3);
+      // Calculate actual height needed
+      doc.setFontSize(8);
+      const descLines = wrapText(sk.description || "", contentW - 100, 8);
+      const rowH = Math.max(descLines.length * 4 + 6, 14);
+      checkPage(rowH);
+
+      if (i % 2 === 0) {
+        doc.setFillColor(250, 248, 255);
+        doc.roundedRect(margin + 2, y - 2, contentW - 4, rowH, 1.5, 1.5, "F");
+      }
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(50, 30, 120);
+      doc.text(sk.name || "", margin + 8, y + 5);
+
       const lc = sk.level === "Essential" ? [220, 50, 50] : sk.level === "Important" ? [200, 150, 20] : [50, 160, 80];
-      doc.setFontSize(7); doc.setFont("helvetica", "bold"); doc.setTextColor(lc[0], lc[1], lc[2]); doc.text(`[${sk.level}]`, 85, y + 3);
-      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(100, 100, 100);
-      doc.text(sk.description, 110, y + 3, { maxWidth: pageW - 140 }); y += 12;
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(lc[0], lc[1], lc[2]);
+      doc.text(`[${sk.level}]`, margin + 65, y + 5);
+
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 100, 100);
+      doc.text(descLines, margin + 90, y + 5);
+      y += rowH + 2;
     });
     y += 6;
 
+    // ── Stages ──
     rm.stages.forEach((stage, si) => {
-      checkPage(22);
-      doc.setFillColor(120, 80, 220); doc.circle(28, y + 3, 5, "F");
-      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
-      doc.text(`${si + 1}`, 28, y + 5, { align: "center" });
-      doc.setFontSize(13); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 30, 120);
-      doc.text(stage.title, 38, y + 5);
-      doc.setFontSize(9); doc.setFont("helvetica", "normal"); doc.setTextColor(140, 140, 140);
-      doc.text(`(${stage.duration})`, 38 + doc.getTextWidth(stage.title) + 4, y + 5); y += 14;
+      checkPage(24);
+      doc.setFillColor(120, 80, 220);
+      doc.circle(margin + 8, y + 4, 5, "F");
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255);
+      doc.text(`${si + 1}`, margin + 8, y + 6, { align: "center" });
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(50, 30, 120);
+      doc.text(stage.title || "", margin + 18, y + 6);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(140, 140, 140);
+      doc.text(`(${stage.duration || ""})`, margin + 18 + doc.getTextWidth(stage.title || "") + 4, y + 6);
+      y += 16;
 
       stage.topics.forEach((topic) => {
-        checkPage(18);
-        const topicDesc = doc.splitTextToSize(topic.description, pageW - 70);
-        const cardH = topicDesc.length * 4.5 + 10;
-        doc.setFillColor(248, 246, 255); doc.roundedRect(30, y - 2, pageW - 54, cardH, 2, 2, "F");
-        doc.setFillColor(160, 120, 240); doc.rect(30, y - 2, 2, cardH, "F");
-        doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(60, 40, 140);
-        doc.text(`▪ ${topic.name}`, 36, y + 4);
-        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(80, 80, 80);
-        doc.text(topicDesc, 36, y + 10); y += cardH + 4;
+        doc.setFontSize(8);
+        const topicDescLines = wrapText(topic.description || "", contentW - 30, 8);
+        const topicH = topicDescLines.length * 4 + 16;
+        checkPage(topicH);
+
+        doc.setFillColor(248, 246, 255);
+        doc.roundedRect(margin + 10, y, contentW - 20, topicH, 2, 2, "F");
+        doc.setFillColor(160, 120, 240);
+        doc.rect(margin + 10, y, 2, topicH, "F");
+
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(60, 40, 140);
+        doc.text(topic.name || "", margin + 16, y + 6);
+
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(80, 80, 80);
+        doc.text(topicDescLines, margin + 16, y + 12);
+        y += topicH + 4;
       });
 
       if (si < rm.stages.length - 1) {
-        checkPage(8); doc.setDrawColor(200, 180, 255); doc.setLineWidth(0.3);
-        doc.setLineDashPattern([2, 2], 0); doc.line(28, y, 28, y + 6);
-        doc.setLineDashPattern([], 0); y += 8;
+        checkPage(10);
+        doc.setDrawColor(200, 180, 255);
+        doc.setLineWidth(0.3);
+        doc.setLineDashPattern([2, 2], 0);
+        doc.line(margin + 8, y, margin + 8, y + 6);
+        doc.setLineDashPattern([], 0);
+        y += 10;
       }
     });
 
-    doc.addPage(); drawPageBorder();
-    doc.setFillColor(120, 80, 220); doc.roundedRect(30, 60, pageW - 60, 50, 6, 6, "F");
-    doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
+    // ── Final page ──
+    doc.addPage();
+    drawPageBorder();
+    doc.setFillColor(120, 80, 220);
+    doc.roundedRect(30, 60, pageW - 60, 50, 6, 6, "F");
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
     doc.text("You're ready to begin!", pageW / 2, 82, { align: "center" });
-    doc.setFontSize(11); doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
     doc.text("Master these skills & topics step by step.", pageW / 2, 96, { align: "center" });
-    doc.setFontSize(9); doc.setTextColor(150, 150, 150);
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
     doc.text("Generated by CareerCompass AI", pageW / 2, 130, { align: "center" });
     doc.text(new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }), pageW / 2, 138, { align: "center" });
 
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i); doc.setFontSize(8); doc.setTextColor(180, 180, 180);
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(180, 180, 180);
       doc.text(`Page ${i} of ${totalPages}`, pageW / 2, pageH - 12, { align: "center" });
     }
     doc.save(`${rm.career.replace(/\s+/g, "_")}_Roadmap.pdf`);
