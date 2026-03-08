@@ -84,12 +84,14 @@ serve(async (req) => {
         .join("\n\n---\n\n");
 
       if (gathered.length < 50) {
+        // Graceful fallback (not an exception) so frontend can switch to manual mode
         return new Response(
-          JSON.stringify({ 
-            error: "Could not find enough public information for this LinkedIn profile. LinkedIn limits public access to profiles. Please paste your profile content using the manual input option below.",
-            showManualInput: true 
+          JSON.stringify({
+            success: false,
+            showManualInput: true,
+            error: "LinkedIn limits public access to profiles. Please paste your profile content using the manual input option below.",
           }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
