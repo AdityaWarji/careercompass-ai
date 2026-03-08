@@ -29,6 +29,7 @@ export default function SkillExplorerPage() {
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState<SkillPlan | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleExplore = async () => {
     if (!skill.trim()) return;
