@@ -279,7 +279,7 @@ export default function DashboardPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="flex items-center justify-between mt-4 pt-4 border-t border-border/50"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 pt-4 border-t border-border/50 gap-3"
               >
                 <div className="flex items-center gap-4">
                   <div>
