@@ -51,6 +51,7 @@ Be precise and compare actual keywords. Return ONLY valid JSON, no markdown.`;
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
+        temperature: 0,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent },
