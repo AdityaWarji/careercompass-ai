@@ -208,17 +208,23 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="section-padding bg-background">
-        <div className="max-w-5xl mx-auto">
-          <AnimatedSection className="text-center mb-14">
-            <span className="floating-badge mb-4 inline-flex">
-              <Sparkles className="h-3.5 w-3.5" /> Features
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Everything You Need to <br /><span className="gradient-text">Land Your Dream Job</span>
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto text-base">Six powerful AI tools designed to accelerate your career journey.</p>
-          </AnimatedSection>
+      <section id="features" className="section-padding bg-background aurora-bg">
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="text-center mb-14">
+            <AnimatedSection>
+              <span className="floating-badge mb-4 inline-flex">
+                <Sparkles className="h-3.5 w-3.5" /> Features
+              </span>
+            </AnimatedSection>
+            <TextReveal>
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                Everything You Need to <br /><span className="gradient-text">Land Your Dream Job</span>
+              </h2>
+            </TextReveal>
+            <AnimatedSection delay={0.2}>
+              <p className="text-muted-foreground max-w-lg mx-auto text-base">Six powerful AI tools designed to accelerate your career journey.</p>
+            </AnimatedSection>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map((f, i) => (
