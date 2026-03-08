@@ -90,6 +90,13 @@ export default function ATSScannerPage() {
           score: data.result.score,
           resultData: data.result,
         });
+        sendNotification(
+          user.id,
+          "ATS Scan Complete",
+          `ATS score: ${data.result.score}/100 — ${data.result.matchedKeywords?.length || 0} keywords matched, ${data.result.missingKeywords?.length || 0} missing.`,
+          "analysis",
+          "/ats-scanner"
+        );
       }
     } catch (e: any) {
       console.error(e);

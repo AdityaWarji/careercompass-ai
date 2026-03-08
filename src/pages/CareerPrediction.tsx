@@ -251,6 +251,15 @@ export default function CareerPredictionPage() {
           summary: `Top match: ${data.predictions?.[0]?.role || "N/A"}`,
           resultData: { skills, predictions: data.predictions },
         });
+        const topRole = data.predictions?.[0]?.role || "your skills";
+        const jobCount = data.total_jobs_found || 0;
+        sendNotification(
+          user.id,
+          `🎯 ${jobCount} Jobs Found for ${topRole}`,
+          `We found ${jobCount} live job openings matching your skills. Top match: ${topRole} (${data.predictions?.[0]?.match || 0}% fit).`,
+          "job_match",
+          "/career-prediction"
+        );
       }
     } catch (e: any) {
       toast({ title: "❌ Prediction failed", description: e.message || "Something went wrong.", variant: "destructive" });

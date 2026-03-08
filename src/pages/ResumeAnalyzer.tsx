@@ -59,6 +59,13 @@ export default function ResumeAnalyzerPage() {
           score: data.result.score,
           resultData: data.result,
         });
+        sendNotification(
+          user.id,
+          "Resume Analysis Complete",
+          `Your resume scored ${data.result.score}/100 with ${data.result.skills?.length || 0} skills detected.`,
+          "analysis",
+          "/resume-analyzer"
+        );
       }
     } catch (e: any) {
       console.error(e);
