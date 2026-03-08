@@ -63,16 +63,21 @@ export default function ATSScannerPage() {
   };
 
   const handleScan = async () => {
-    if (!jobDesc.trim() || !resumeText.trim()) {
+    if (!jobDesc.trim() || (!resumeText.trim() && !fileBase64)) {
       toast({ title: "Missing input", description: "Please provide both resume and job description.", variant: "destructive" });
       return;
     }
     setLoading(true);
     setResult(null);
     try {
-      const { data, error } = await supabase.functions.invoke("ats-scanner", {
-        body: { resumeText: resumeText.trim(), jobDescription: jobDesc.trim() },
-      });
+      const body: Record<string, string> = { jobDescription: jobDesc.trim() };
+      if (fileBase64 && fileName) {
+        body.fileBase64 = fileBase64;
+        body.fileName = fileName;
+      } else {
+        body.resumeText = resumeText.trim();
+      }
+      const { data, error } = await supabase.functions.invoke("ats-scanner", { body });
       if (error) throw error;
       setResult(data.result);
       if (user) {
