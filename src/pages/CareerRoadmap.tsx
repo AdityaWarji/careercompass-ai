@@ -434,7 +434,7 @@ export default function CareerRoadmapPage() {
                         initial={{ opacity: 0, y: -4 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -4 }}
-                        className="absolute z-50 top-full mt-2 left-0 right-0 bg-card border border-border rounded-xl shadow-xl overflow-hidden max-h-72 overflow-y-auto"
+                        className="absolute z-[80] top-full mt-2 left-0 right-0 bg-card border border-border rounded-xl shadow-2xl max-h-72 overflow-y-auto"
                       >
                         <div className="px-3 py-2 border-b border-border">
                           <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
