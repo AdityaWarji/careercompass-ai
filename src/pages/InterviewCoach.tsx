@@ -224,6 +224,15 @@ export default function InterviewCoachPage() {
     }
   };
 
+  const endInterviewEarly = () => {
+    setIsTimerRunning(false);
+    if (results.length > 0) {
+      generateReport();
+    } else {
+      toast({ title: "No answers yet", description: "Answer at least one question before ending.", variant: "destructive" });
+    }
+  };
+
   const resetAll = () => {
     setPhase("setup");
     setQuestions([]);
