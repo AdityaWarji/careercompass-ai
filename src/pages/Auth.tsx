@@ -34,6 +34,7 @@ export default function AuthPage() {
   const [otpTimer, setOtpTimer] = useState(OTP_DURATION);
   const [otpVerifying, setOtpVerifying] = useState(false);
   const [otpSuccess, setOtpSuccess] = useState(false);
+  const [showOtpSplash, setShowOtpSplash] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
