@@ -122,13 +122,15 @@ export default function AuthPage() {
             <Compass className="h-7 w-7" />
           </div>
           <h1 className="font-display text-3xl font-bold text-primary-foreground mb-2">
-            {mode === "login" ? "Welcome Back" : mode === "signup" ? "Create Account" : "Magic Link"}
+            {mode === "login" ? "Welcome Back" : mode === "signup" ? "Create Account" : mode === "forgot" ? "Forgot Password" : "Magic Link"}
           </h1>
           <p className="text-primary-foreground/60 text-sm">
             {mode === "login"
               ? "Sign in to access your career dashboard"
               : mode === "signup"
               ? "Start your AI-powered career journey"
+              : mode === "forgot"
+              ? "We'll send you a link to reset your password"
               : "We'll email you a passwordless login link"}
           </p>
         </div>
