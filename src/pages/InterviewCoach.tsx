@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Brain, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -20,9 +21,9 @@ const allQuestions: { skill: string; question: string; difficulty: Difficulty }[
 ];
 
 const diffColors: Record<Difficulty, string> = {
-  Beginner: "bg-green-500/10 text-green-700",
-  Intermediate: "bg-yellow-500/10 text-yellow-700",
-  Advanced: "bg-red-500/10 text-red-700",
+  Beginner: "bg-green-500/10 text-green-700 dark:text-green-400",
+  Intermediate: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  Advanced: "bg-red-500/10 text-red-700 dark:text-red-400",
 };
 
 export default function InterviewCoachPage() {
@@ -33,6 +34,7 @@ export default function InterviewCoachPage() {
 
   return (
     <div className="page-container">
+      <div className="mb-6"><BackButton /></div>
       <PageHeader icon={<Brain className="h-7 w-7" />} title="AI Interview Coach" subtitle="Practice with AI-generated interview questions tailored to your skills." />
 
       <div className="max-w-3xl mx-auto">
@@ -41,9 +43,7 @@ export default function InterviewCoachPage() {
             <button
               key={d}
               onClick={() => setFilter(d)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                filter === d ? "gradient-btn" : "bg-muted text-muted-foreground hover:bg-accent"
-              }`}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filter === d ? "gradient-btn" : "bg-muted text-muted-foreground hover:bg-accent"}`}
             >
               {d}
             </button>
@@ -53,24 +53,13 @@ export default function InterviewCoachPage() {
         <div className="space-y-4">
           <AnimatePresence mode="popLayout">
             {filtered.map((q, i) => (
-              <motion.div
-                key={q.question}
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => setShowAnswer(showAnswer === i ? null : i)}
-                className="glass-card rounded-2xl p-5 cursor-pointer card-hover"
-              >
+              <motion.div key={q.question} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ delay: i * 0.05 }} onClick={() => setShowAnswer(showAnswer === i ? null : i)} className="glass-card rounded-2xl p-5 cursor-pointer card-hover">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <span className="text-xs text-muted-foreground font-medium">{q.skill}</span>
                     <p className="font-medium mt-1">{q.question}</p>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${diffColors[q.difficulty]}`}>
-                    {q.difficulty}
-                  </span>
+                  <span className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap ${diffColors[q.difficulty]}`}>{q.difficulty}</span>
                 </div>
                 {showAnswer === i && (
                   <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 text-sm text-muted-foreground border-t border-border pt-3">

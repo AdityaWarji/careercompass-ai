@@ -1,4 +1,5 @@
 import { Map, BookOpen, Wrench, FolderOpen, Award } from "lucide-react";
+import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -38,6 +39,7 @@ const stages = [
 export default function CareerRoadmapPage() {
   return (
     <div className="page-container">
+      <div className="mb-6"><BackButton /></div>
       <PageHeader icon={<Map className="h-7 w-7" />} title="AI Career Roadmap" subtitle="Your personalized learning path from beginner to advanced." />
 
       <div className="max-w-4xl mx-auto space-y-8">

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Mic, MicOff, Play, Square } from "lucide-react";
+import { Mic, MicOff, Play } from "lucide-react";
 import { motion } from "framer-motion";
+import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
 import AnimatedSection from "@/components/AnimatedSection";
 import ScoreCircle from "@/components/ScoreCircle";
 
 const jobRoles = ["Software Developer", "Data Scientist", "ML Engineer", "Web Developer", "Data Analyst"];
-
 const mockQuestions = [
   "Tell me about yourself and your experience.",
   "What is your greatest technical strength?",
@@ -24,22 +24,21 @@ export default function VoiceInterviewPage() {
 
   const handleStart = () => { if (role) setStarted(true); };
   const handleNext = () => {
-    if (currentQ < mockQuestions.length - 1) {
-      setCurrentQ(currentQ + 1);
-      setRecording(false);
-    } else {
-      setCompleted(true);
-    }
+    if (currentQ < mockQuestions.length - 1) { setCurrentQ(currentQ + 1); setRecording(false); }
+    else setCompleted(true);
   };
+
+  const handleReset = () => { setCompleted(false); setStarted(false); setCurrentQ(0); setRole(""); };
 
   if (completed) {
     return (
       <div className="page-container">
+        <div className="mb-6"><BackButton onClick={handleReset} /></div>
         <PageHeader icon={<Mic className="h-7 w-7" />} title="Interview Summary" subtitle={`Mock interview for ${role} completed.`} />
         <div className="max-w-2xl mx-auto space-y-6">
           <div className="glass-card rounded-2xl p-8 text-center">
             <h3 className="font-display font-semibold text-xl mb-6">Overall Performance</h3>
-            <div className="flex justify-center gap-8">
+            <div className="flex justify-center gap-8 flex-wrap">
               <ScoreCircle score={75} label="Confidence" />
               <ScoreCircle score={82} label="Answer Quality" />
               <ScoreCircle score={68} label="Clarity" />
@@ -47,16 +46,16 @@ export default function VoiceInterviewPage() {
           </div>
           <div className="glass-card rounded-2xl p-6">
             <h3 className="font-display font-semibold mb-3">Suggested Improvements</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex gap-2"><span className="gradient-text">→</span>Use the STAR method for behavioral questions</li>
-              <li className="flex gap-2"><span className="gradient-text">→</span>Include more specific technical examples</li>
-              <li className="flex gap-2"><span className="gradient-text">→</span>Slow down your pace for better clarity</li>
-              <li className="flex gap-2"><span className="gradient-text">→</span>Quantify achievements with numbers and metrics</li>
-            </ul>
+            <div className="space-y-2">
+              {["Use the STAR method for behavioral questions", "Include more specific technical examples", "Slow down your pace for better clarity", "Quantify achievements with numbers and metrics"].map((s, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-muted/50">
+                  <span className="w-6 h-6 rounded-lg gradient-btn flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
+                  <p className="text-sm">{s}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <button onClick={() => { setCompleted(false); setStarted(false); setCurrentQ(0); setRole(""); }} className="gradient-btn px-6 py-3 rounded-xl text-sm font-semibold">
-            Start New Interview
-          </button>
+          <button onClick={handleReset} className="gradient-btn px-6 py-3 rounded-xl text-sm font-semibold">Start New Interview</button>
         </div>
       </div>
     );
@@ -64,6 +63,7 @@ export default function VoiceInterviewPage() {
 
   return (
     <div className="page-container">
+      <div className="mb-6"><BackButton onClick={started ? () => setStarted(false) : undefined} /></div>
       <PageHeader icon={<Mic className="h-7 w-7" />} title="Voice Mock Interview" subtitle="Practice answering interview questions using your microphone with AI feedback." />
 
       {!started ? (
@@ -72,13 +72,7 @@ export default function VoiceInterviewPage() {
             <label className="block font-semibold text-sm mb-3">Select Job Role</label>
             <div className="space-y-2">
               {jobRoles.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all ${role === r ? "gradient-btn" : "bg-muted hover:bg-accent"}`}
-                >
-                  {r}
-                </button>
+                <button key={r} onClick={() => setRole(r)} className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all ${role === r ? "gradient-btn" : "bg-muted hover:bg-accent"}`}>{r}</button>
               ))}
             </div>
             <button onClick={handleStart} disabled={!role} className="w-full mt-4 gradient-btn py-3 rounded-xl font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2">
@@ -94,10 +88,7 @@ export default function VoiceInterviewPage() {
           </div>
           <div className="glass-card rounded-2xl p-8 text-center">
             <p className="font-display text-xl font-semibold mb-8">{mockQuestions[currentQ]}</p>
-            <button
-              onClick={() => setRecording(!recording)}
-              className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto transition-all ${recording ? "bg-destructive animate-pulse" : "gradient-btn"}`}
-            >
+            <button onClick={() => setRecording(!recording)} className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto transition-all ${recording ? "bg-destructive animate-pulse" : "gradient-btn"}`}>
               {recording ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
             </button>
             <p className="text-sm text-muted-foreground mt-3">{recording ? "Recording... Click to stop" : "Click to start recording"}</p>

@@ -1,90 +1,51 @@
-import { LayoutDashboard, FileText, TrendingUp, BarChart3, Brain, Map, Search } from "lucide-react";
+import { LayoutDashboard, FileText, TrendingUp, Brain, Map, Search, Compass, ArrowRight } from "lucide-react";
+import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
-import ScoreCircle from "@/components/ScoreCircle";
 import AnimatedSection from "@/components/AnimatedSection";
-import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-const topRoles = [
-  { role: "Data Scientist", pct: 92 },
-  { role: "ML Engineer", pct: 85 },
-  { role: "Software Developer", pct: 78 },
-];
-
 const quickLinks = [
-  { icon: FileText, label: "Resume Analyzer", to: "/resume-analyzer" },
-  { icon: Search, label: "ATS Scanner", to: "/ats-scanner" },
-  { icon: Brain, label: "Interview Coach", to: "/interview-coach" },
-  { icon: Map, label: "Career Roadmap", to: "/career-roadmap" },
+  { icon: FileText, label: "Resume Analyzer", desc: "Score your resume", to: "/resume-analyzer", color: "from-violet-500 to-purple-600" },
+  { icon: Search, label: "ATS Scanner", desc: "Optimize for ATS", to: "/ats-scanner", color: "from-blue-500 to-cyan-500" },
+  { icon: Brain, label: "Interview Coach", desc: "Practice questions", to: "/interview-coach", color: "from-pink-500 to-rose-500" },
+  { icon: TrendingUp, label: "Career Prediction", desc: "Find best roles", to: "/career-prediction", color: "from-amber-500 to-orange-500" },
+  { icon: Compass, label: "Skill Explorer", desc: "Learn new skills", to: "/skill-explorer", color: "from-emerald-500 to-teal-500" },
+  { icon: Map, label: "Career Roadmap", desc: "Plan your path", to: "/career-roadmap", color: "from-sky-500 to-blue-600" },
 ];
 
 export default function DashboardPage() {
   return (
     <div className="page-container">
-      <PageHeader icon={<LayoutDashboard className="h-7 w-7" />} title="Dashboard" subtitle="Your career analysis at a glance." />
+      <div className="mb-6"><BackButton /></div>
+      <PageHeader icon={<LayoutDashboard className="h-7 w-7" />} title="Dashboard" subtitle="Your career analysis hub. Use the tools below to get started." />
 
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Score cards row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatedSection>
-            <div className="glass-card rounded-2xl p-6 text-center">
-              <ScoreCircle score={78} size={100} label="Resume Score" />
-            </div>
-          </AnimatedSection>
-          <AnimatedSection delay={0.1}>
-            <div className="glass-card rounded-2xl p-6 text-center">
-              <ScoreCircle score={65} size={100} label="ATS Score" />
-            </div>
-          </AnimatedSection>
-          <AnimatedSection delay={0.2}>
-            <div className="glass-card rounded-2xl p-6 text-center">
-              <ScoreCircle score={72} size={100} label="LinkedIn Score" />
-            </div>
-          </AnimatedSection>
-          <AnimatedSection delay={0.3}>
-            <div className="glass-card rounded-2xl p-6 text-center">
-              <div className="font-display text-3xl font-bold gradient-text mb-1">7</div>
-              <div className="text-xs text-muted-foreground">Skills Detected</div>
-              <div className="font-display text-3xl font-bold text-orange-500 mt-2">5</div>
-              <div className="text-xs text-muted-foreground">Skills to Learn</div>
-            </div>
-          </AnimatedSection>
-        </div>
-
-        {/* Top roles */}
-        <AnimatedSection delay={0.2}>
-          <div className="glass-card rounded-2xl p-6">
-            <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><TrendingUp className="h-5 w-5 text-primary" /> Top Career Roles</h3>
-            <div className="space-y-3">
-              {topRoles.map((r) => (
-                <div key={r.role} className="flex items-center gap-4">
-                  <span className="text-sm font-medium w-40">{r.role}</span>
-                  <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ background: "var(--gradient-primary)" }}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${r.pct}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1 }}
-                    />
-                  </div>
-                  <span className="text-sm font-bold gradient-text w-10 text-right">{r.pct}%</span>
-                </div>
-              ))}
-            </div>
+      <div className="max-w-5xl mx-auto">
+        {/* Welcome card */}
+        <AnimatedSection>
+          <div className="glass-card rounded-2xl p-8 mb-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-20" style={{ background: "radial-gradient(circle, hsla(258, 90%, 62%, 0.3), transparent)" }} />
+            <h3 className="font-display font-bold text-2xl mb-2 relative">Welcome to CareerCompass AI</h3>
+            <p className="text-muted-foreground text-sm max-w-lg relative">
+              Start by analyzing your resume to unlock personalized career insights, skill gap analysis, and interview preparation powered by Gemini AI.
+            </p>
+            <Link to="/resume-analyzer" className="mt-4 inline-flex items-center gap-2 gradient-btn px-6 py-3 rounded-xl font-semibold text-sm relative">
+              Get Started <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </AnimatedSection>
 
         {/* Quick links */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickLinks.map((l, i) => (
-            <AnimatedSection key={l.label} delay={i * 0.1}>
-              <Link to={l.to} className="glass-card rounded-2xl p-5 flex flex-col items-center gap-3 card-hover text-center">
-                <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center">
-                  <l.icon className="h-5 w-5" />
+            <AnimatedSection key={l.label} delay={i * 0.08}>
+              <Link to={l.to} className="glass-card rounded-2xl p-6 flex items-start gap-4 card-hover group">
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${l.color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                  <l.icon className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <span className="text-sm font-medium">{l.label}</span>
+                <div>
+                  <h3 className="font-display font-semibold text-base mb-1">{l.label}</h3>
+                  <p className="text-muted-foreground text-sm">{l.desc}</p>
+                </div>
               </Link>
             </AnimatedSection>
           ))}
