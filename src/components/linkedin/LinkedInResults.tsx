@@ -1,10 +1,19 @@
-import { motion } from "framer-motion";
-import { CheckCircle, AlertTriangle, Lightbulb, Zap, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle, AlertTriangle, Lightbulb, Zap, ChevronRight, Rocket, Copy, Check, ExternalLink, BookOpen, Users, Briefcase, Award, TrendingUp } from "lucide-react";
 
 interface Suggestion {
   title: string;
   description: string;
   priority: string;
+}
+
+interface ScoreBreakdown {
+  headlineScore: number;
+  summaryScore: number;
+  experienceScore: number;
+  skillsScore: number;
+  networkScore: number;
 }
 
 interface LinkedInResultsProps {
@@ -14,6 +23,7 @@ interface LinkedInResultsProps {
   suggestions: Suggestion[];
   headlineSuggestion: string;
   summarySuggestion: string;
+  scores?: ScoreBreakdown;
 }
 
 const priorityColors: Record<string, string> = {
