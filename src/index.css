@@ -182,12 +182,30 @@
     transform: translateY(-4px);
   }
 
+  .header-glow {
+    background: linear-gradient(
+      90deg,
+      hsla(258, 90%, 62%, 0.03) 0%,
+      hsla(220, 70%, 55%, 0.05) 50%,
+      hsla(258, 90%, 62%, 0.03) 100%
+    ), hsl(var(--background) / 0.6);
+    border-image: linear-gradient(
+      90deg,
+      transparent,
+      hsla(258, 90%, 62%, 0.2),
+      hsla(220, 70%, 55%, 0.2),
+      transparent
+    ) 1;
+  }
+
   .section-padding {
     @apply px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24;
   }
 
   .page-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12;
+    position: relative;
+    z-index: 1;
   }
 }
 
