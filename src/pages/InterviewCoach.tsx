@@ -124,6 +124,37 @@ export default function InterviewCoachPage() {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  // Role autocomplete
+  const fetchRoleSuggestions = useCallback(async (query: string) => {
+    if (query.length < 2) { setRoleSuggestions([]); return; }
+    setLoadingRoleSuggestions(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("career-prediction", {
+        body: { skills: [query], action: "suggest_skills" },
+      });
+      if (!error && data?.suggestions) {
+        setRoleSuggestions(data.suggestions);
+        setShowRoleSuggestions(data.suggestions.length > 0);
+      }
+    } catch {} finally { setLoadingRoleSuggestions(false); }
+  }, []);
+
+  useEffect(() => {
+    if (roleDebounceRef.current) clearTimeout(roleDebounceRef.current);
+    if (role.trim().length >= 2 && !popularRoles.includes(role)) {
+      roleDebounceRef.current = setTimeout(() => fetchRoleSuggestions(role.trim()), 400);
+    } else { setRoleSuggestions([]); setShowRoleSuggestions(false); }
+    return () => { if (roleDebounceRef.current) clearTimeout(roleDebounceRef.current); };
+  }, [role, fetchRoleSuggestions]);
+
+  useEffect(() => {
+    const h = (e: MouseEvent) => {
+      if (roleDropdownRef.current && !roleDropdownRef.current.contains(e.target as Node)) setShowRoleSuggestions(false);
+    };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+
   // Timer
   useEffect(() => {
     if (!isTimerRunning || timeLeft <= 0) return;
