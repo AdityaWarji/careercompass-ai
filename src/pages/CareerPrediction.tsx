@@ -166,9 +166,9 @@ export default function CareerPredictionPage() {
   const { user } = useAuth();
 
   const loadingSteps = [
-    { text: "Scanning live job market data...", icon: Search, emoji: "🔍" },
+    { text: "Fetching live jobs from Google...", icon: Search, emoji: "🔍" },
     { text: "Analyzing real-time salary trends...", icon: IndianRupee, emoji: "💰" },
-    { text: "Identifying top hiring companies...", icon: Building2, emoji: "🏢" },
+    { text: "Scanning Naukri, LinkedIn, Indeed...", icon: Building2, emoji: "🏢" },
     { text: "Mapping career growth trajectories...", icon: Rocket, emoji: "🚀" },
     { text: "Generating AI-powered predictions...", icon: Sparkles, emoji: "✨" },
   ];
