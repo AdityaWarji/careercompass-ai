@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Map, Loader2, BookOpen, Youtube, ExternalLink, Award, Wrench, FolderOpen, Clock, ChevronRight, Sparkles, ArrowLeft } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Map, Loader2, BookOpen, Youtube, ExternalLink, Award, Wrench, FolderOpen, Clock, ChevronRight, Sparkles, ArrowLeft, Search, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
@@ -83,39 +83,89 @@ const difficultyColors: Record<string, string> = {
   Advanced: "bg-red-500/10 text-red-400",
 };
 
+// Instant example career paths — shown immediately, no API call needed
+const exampleCareers: CareerPath[] = [
+  { id: "data-scientist", title: "Data Scientist", icon: "📊", category: "Tech", description: "Analyze complex data to help organizations make better decisions using ML & statistics." },
+  { id: "full-stack-dev", title: "Full Stack Developer", icon: "💻", category: "Tech", description: "Build complete web applications from frontend to backend and deployment." },
+  { id: "ml-engineer", title: "ML Engineer", icon: "🤖", category: "Tech", description: "Design and deploy machine learning models into production systems." },
+  { id: "cloud-architect", title: "Cloud Architect", icon: "☁️", category: "Tech", description: "Design and manage scalable cloud infrastructure on AWS, GCP, or Azure." },
+  { id: "cybersecurity-analyst", title: "Cybersecurity Analyst", icon: "🔒", category: "Tech", description: "Protect systems and networks from cyber threats and vulnerabilities." },
+  { id: "devops-engineer", title: "DevOps Engineer", icon: "⚙️", category: "Engineering", description: "Automate development pipelines and manage infrastructure as code." },
+  { id: "ui-ux-designer", title: "UI/UX Designer", icon: "🎨", category: "Creative", description: "Design intuitive and beautiful user interfaces and experiences." },
+  { id: "product-manager", title: "Product Manager", icon: "📋", category: "Business", description: "Lead product strategy, roadmap, and cross-functional team collaboration." },
+  { id: "data-engineer", title: "Data Engineer", icon: "🔧", category: "Engineering", description: "Build and maintain data pipelines and warehousing infrastructure." },
+  { id: "ai-researcher", title: "AI Researcher", icon: "🧠", category: "Science", description: "Push the boundaries of artificial intelligence through novel research." },
+  { id: "mobile-developer", title: "Mobile Developer", icon: "📱", category: "Tech", description: "Build native and cross-platform mobile apps for iOS and Android." },
+  { id: "blockchain-dev", title: "Blockchain Developer", icon: "⛓️", category: "Tech", description: "Build decentralized applications and smart contracts." },
+  { id: "game-developer", title: "Game Developer", icon: "🎮", category: "Creative", description: "Create interactive games using Unity, Unreal, or custom engines." },
+  { id: "biotech-scientist", title: "Biotech Scientist", icon: "🧬", category: "Science", description: "Apply technology to biological systems for medical and agricultural advances." },
+  { id: "healthcare-analyst", title: "Healthcare Data Analyst", icon: "🏥", category: "Healthcare", description: "Analyze health data to improve patient outcomes and operational efficiency." },
+  { id: "digital-marketer", title: "Digital Marketer", icon: "📈", category: "Business", description: "Drive growth through SEO, social media, paid ads, and content strategy." },
+  { id: "robotics-engineer", title: "Robotics Engineer", icon: "🦾", category: "Engineering", description: "Design and build robotic systems combining hardware and software." },
+  { id: "quant-analyst", title: "Quantitative Analyst", icon: "📐", category: "Business", description: "Use mathematical models to analyze financial markets and manage risk." },
+];
+
 export default function CareerRoadmapPage() {
-  const [careers, setCareers] = useState<CareerPath[]>([]);
-  const [loadingCareers, setLoadingCareers] = useState(true);
   const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
   const [roadmap, setRoadmap] = useState<CareerRoadmap | null>(null);
   const [loadingRoadmap, setLoadingRoadmap] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<CareerPath[]>([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const { toast } = useToast();
   const { user } = useAuth();
 
-  useEffect(() => {
-    loadCareers();
-  }, []);
-
-  const loadCareers = async () => {
-    setLoadingCareers(true);
+  // Real-time AI search for career paths
+  const fetchSearchResults = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    setLoadingSearch(true);
     try {
       const { data, error } = await supabase.functions.invoke("career-roadmap", {
-        body: { action: "list_careers" },
+        body: { career: query, action: "suggest_careers" },
       });
-      if (error) throw error;
-      setCareers(data.result || []);
-    } catch (e: any) {
-      console.error(e);
-      toast({ title: "Error", description: "Failed to load career paths.", variant: "destructive" });
+      if (!error && data?.result) {
+        setSearchResults(data.result);
+        setShowDropdown(true);
+      }
+    } catch {
+      // silently fail for autocomplete
     } finally {
-      setLoadingCareers(false);
+      setLoadingSearch(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (searchQuery.trim().length >= 2) {
+      debounceRef.current = setTimeout(() => fetchSearchResults(searchQuery.trim()), 500);
+    } else {
+      setSearchResults([]);
+      setShowDropdown(false);
+    }
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [searchQuery, fetchSearchResults]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const selectCareer = async (career: string) => {
     setSelectedCareer(career);
+    setShowDropdown(false);
     setLoadingRoadmap(true);
     setRoadmap(null);
     try {
@@ -141,8 +191,8 @@ export default function CareerRoadmapPage() {
     }
   };
 
-  const categories = ["All", ...Array.from(new Set(careers.map((c) => c.category)))];
-  const filtered = careers.filter((c) => {
+  const allCategories = ["All", ...Array.from(new Set(exampleCareers.map((c) => c.category)))];
+  const filtered = exampleCareers.filter((c) => {
     const matchCat = filterCategory === "All" || c.category === filterCategory;
     const matchSearch = !searchQuery || c.title.toLowerCase().includes(searchQuery.toLowerCase()) || c.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
@@ -155,22 +205,63 @@ export default function CareerRoadmapPage() {
 
       {!selectedCareer && !loadingRoadmap && (
         <div className="max-w-5xl mx-auto">
-          {/* Search & Filter */}
+          {/* Search bar with real-time AI dropdown */}
           <AnimatedSection>
             <div className="glass-card rounded-2xl p-5 mb-6">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <div className="flex flex-col gap-4">
+                <div className="relative" ref={searchRef}>
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search career paths..."
-                    className="w-full rounded-xl bg-muted pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    onFocus={() => { if (searchResults.length > 0) setShowDropdown(true); }}
+                    onKeyDown={(e) => { if (e.key === "Enter" && searchQuery.trim()) selectCareer(searchQuery.trim()); }}
+                    placeholder="Search any career path... (e.g., AI Engineer, UX Designer, Biomedical...)"
+                    className="w-full rounded-xl bg-muted pl-11 pr-12 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
+                  {loadingSearch && (
+                    <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
+
+                  {/* AI-powered search dropdown */}
+                  <AnimatePresence>
+                    {showDropdown && searchResults.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        className="absolute z-50 top-full mt-2 left-0 right-0 bg-card border border-border rounded-xl shadow-xl overflow-hidden max-h-72 overflow-y-auto"
+                      >
+                        <div className="px-3 py-2 border-b border-border">
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold flex items-center gap-1">
+                            <Sparkles className="h-3 w-3" /> AI-suggested careers
+                          </p>
+                        </div>
+                        {searchResults.map((r, i) => (
+                          <button
+                            key={i}
+                            onClick={() => selectCareer(r.title)}
+                            className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors flex items-center gap-3 text-sm border-b border-border/50 last:border-0"
+                          >
+                            <span className="text-lg">{r.icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">{r.title}</p>
+                              <p className="text-xs text-muted-foreground truncate">{r.description}</p>
+                            </div>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${categoryBg[r.category] || "bg-muted"}`}>
+                              {r.category}
+                            </span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
+
+                {/* Category filter chips */}
                 <div className="flex gap-2 flex-wrap">
-                  {categories.map((cat) => (
+                  {allCategories.map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setFilterCategory(cat)}
@@ -188,38 +279,39 @@ export default function CareerRoadmapPage() {
             </div>
           </AnimatedSection>
 
-          {loadingCareers ? (
-            <div className="text-center py-20">
-              <div className="relative w-16 h-16 mx-auto mb-6">
-                <div className="absolute inset-0 rounded-full border-4 border-muted" />
-                <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-              </div>
-              <p className="text-muted-foreground">Loading career paths...</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filtered.map((career, i) => (
-                <AnimatedSection key={career.id} delay={i * 0.05}>
-                  <motion.button
-                    onClick={() => selectCareer(career.title)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full text-left glass-card rounded-2xl overflow-hidden card-hover group"
-                  >
-                    <div className={`bg-gradient-to-r ${categoryColors[career.category] || "from-gray-500 to-gray-600"} p-3 flex items-center justify-between`}>
-                      <span className="text-2xl">{career.icon}</span>
-                      <span className="text-xs font-medium bg-white/20 px-2 py-0.5 rounded-full text-white">{career.category}</span>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-display font-semibold text-base mb-1 flex items-center gap-2">
-                        {career.title}
-                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </h3>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{career.description}</p>
-                    </div>
-                  </motion.button>
-                </AnimatedSection>
-              ))}
+          {/* Example career path cards — instant, no loading */}
+          <div className="mb-4 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            <h3 className="font-display font-semibold text-sm text-muted-foreground">Popular Career Paths</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((career, i) => (
+              <AnimatedSection key={career.id} delay={i * 0.04}>
+                <motion.button
+                  onClick={() => selectCareer(career.title)}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full text-left glass-card rounded-2xl overflow-hidden card-hover group"
+                >
+                  <div className={`bg-gradient-to-r ${categoryColors[career.category] || "from-gray-500 to-gray-600"} p-3 flex items-center justify-between`}>
+                    <span className="text-2xl">{career.icon}</span>
+                    <span className="text-xs font-medium bg-white/20 px-2 py-0.5 rounded-full text-white">{career.category}</span>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-display font-semibold text-base mb-1 flex items-center gap-2">
+                      {career.title}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </h3>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{career.description}</p>
+                  </div>
+                </motion.button>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-sm">No matching careers found. Try searching above — AI will find related career paths!</p>
             </div>
           )}
         </div>
