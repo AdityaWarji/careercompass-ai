@@ -17,6 +17,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
