@@ -505,6 +505,47 @@ export default function CareerPredictionPage() {
                         className="overflow-hidden"
                       >
                         <div className="px-5 pb-5 space-y-3 border-t border-border pt-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                            {p.job_openings_estimate && (
+                              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                                <Users className="h-3.5 w-3.5 text-primary shrink-0" />
+                                <div>
+                                  <p className="text-[10px] text-muted-foreground">Openings</p>
+                                  <p className="text-xs font-semibold">{p.job_openings_estimate}</p>
+                                </div>
+                              </div>
+                            )}
+                            {p.growth_outlook && (
+                              <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                                <ArrowUpRight className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                                <div>
+                                  <p className="text-[10px] text-muted-foreground">Growth</p>
+                                  <p className="text-xs font-semibold">{p.growth_outlook}</p>
+                                </div>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                              <DollarSign className="h-3.5 w-3.5 text-primary shrink-0" />
+                              <div>
+                                <p className="text-[10px] text-muted-foreground">Salary (INR)</p>
+                                <p className="text-xs font-semibold">{p.salary_range}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {p.top_companies && p.top_companies.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                                <Building2 className="h-3 w-3 text-primary" /> Top Hiring Companies
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {p.top_companies.map((c) => (
+                                  <span key={c} className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-xs font-medium">{c}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
                           <div>
                             <p className="text-xs font-medium text-muted-foreground mb-1.5 flex items-center gap-1.5">
                               <Zap className="h-3 w-3 text-primary" /> Matched Skills
