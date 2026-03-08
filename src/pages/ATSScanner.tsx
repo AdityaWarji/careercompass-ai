@@ -229,16 +229,70 @@ export default function ATSScannerPage() {
 
       {/* Loading */}
       {loading && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="relative w-20 h-20 mx-auto mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-muted" />
-            <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-            <Search className="absolute inset-0 m-auto h-8 w-8 text-primary" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 max-w-md mx-auto">
+          {/* Animated rings */}
+          <div className="relative w-32 h-32 mx-auto mb-8">
+            <motion.div
+              className="absolute inset-0 rounded-full border-4 border-primary/20"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute inset-2 rounded-full border-4 border-primary/30"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+            />
+            <motion.div
+              className="absolute inset-4 rounded-full border-4 border-primary/40"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              style={{ borderTopColor: "transparent", borderRightColor: "transparent" }}
+            />
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div className="w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center">
+                <Search className="h-7 w-7" />
+              </div>
+            </motion.div>
           </div>
-          <h3 className="font-display font-semibold text-xl mb-2">Scanning with AI...</h3>
-          <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-            Comparing your resume against the job description for keyword matches and ATS optimization
-          </p>
+
+          <motion.h3
+            className="font-display font-semibold text-xl mb-3"
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            Scanning with AI...
+          </motion.h3>
+
+          {/* Animated progress steps */}
+          <div className="space-y-2 text-left mt-6">
+            {["Extracting resume content", "Matching keywords", "Analyzing ATS compatibility", "Generating suggestions"].map((step, i) => (
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 1.2 }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-muted/50"
+              >
+                <motion.div
+                  className="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center"
+                  animate={{ backgroundColor: ["hsla(258,90%,62%,0)", "hsla(258,90%,62%,1)"] }}
+                  transition={{ delay: i * 1.2 + 0.8, duration: 0.3 }}
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: i * 1.2 + 0.8 }}
+                    className="w-2 h-2 rounded-full bg-primary-foreground"
+                  />
+                </motion.div>
+                <span className="text-sm text-muted-foreground">{step}</span>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       )}
 
@@ -335,9 +389,6 @@ export default function ATSScannerPage() {
               <button onClick={handleReset} className="flex-1 py-3 rounded-2xl font-semibold text-sm bg-muted text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2">
                 <Upload className="h-4 w-4" /> Scan Another Resume
               </button>
-              <a href="/resume-analyzer" className="flex-1 py-3 rounded-2xl font-semibold text-sm gradient-btn text-center flex items-center justify-center gap-2">
-                Analyze Resume →
-              </a>
             </div>
           </motion.div>
         )}
