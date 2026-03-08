@@ -233,6 +233,8 @@ export default function CareerPredictionPage() {
       setPredictions(data.predictions || []);
       setGrounded(!!data.grounded);
       setSources(data.sources || []);
+      setLiveJobs(data.live_job_results || []);
+      setTotalJobsFound(data.total_jobs_found || 0);
       toast({ title: "🎯 Predictions ready!", description: `Found ${data.predictions?.length || 0} career matches for you.` });
       if (user) {
         saveActivity({
