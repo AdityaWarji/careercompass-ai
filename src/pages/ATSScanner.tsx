@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Search, Loader2, Upload, FileText, CheckCircle, AlertTriangle, Lightbulb, ArrowRight } from "lucide-react";
+import { Search, Upload, FileText, CheckCircle, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BackButton from "@/components/BackButton";
 import PageHeader from "@/components/PageHeader";
-import ScoreCircle from "@/components/ScoreCircle";
 import AnimatedSection from "@/components/AnimatedSection";
+import ATSScoreReveal from "@/components/ats/ATSScoreReveal";
+import ATSKeywordsGrid from "@/components/ats/ATSKeywordsGrid";
+import ATSSuggestions from "@/components/ats/ATSSuggestions";
+import ATSScanningAnimation from "@/components/ats/ATSScanningAnimation";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,12 +38,10 @@ export default function ATSScannerPage() {
     if (!f) return;
     setFile(f);
     const isBinary = /\.(pdf|doc|docx)$/i.test(f.name);
-
     if (isBinary) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const base64 = (e.target?.result as string).split(",")[1];
-        setFileBase64(base64);
+        setFileBase64((e.target?.result as string).split(",")[1]);
         setFileName(f.name);
         setResumeText("__file_uploaded__");
         setStep("jobdesc");
@@ -83,43 +84,26 @@ export default function ATSScannerPage() {
       setResult(data.result);
       if (user) {
         saveActivity({
-          userId: user.id,
-          activityType: "ats_scan",
-          title: "ATS Scan",
+          userId: user.id, activityType: "ats_scan", title: "ATS Scan",
           summary: `Score: ${data.result.score}/100 • ${data.result.matchedKeywords?.length || 0} matched, ${data.result.missingKeywords?.length || 0} missing`,
-          score: data.result.score,
-          resultData: data.result,
+          score: data.result.score, resultData: data.result,
         });
-        sendNotification(
-          user.id,
-          "ATS Scan Complete",
+        sendNotification(user.id, "ATS Scan Complete",
           `ATS score: ${data.result.score}/100 — ${data.result.matchedKeywords?.length || 0} keywords matched, ${data.result.missingKeywords?.length || 0} missing.`,
-          "analysis",
-          "/ats-scanner"
+          "analysis", "/ats-scanner"
         );
       }
     } catch (e: any) {
       console.error(e);
-      toast({ title: "Error", description: e.message || "Failed to scan. Please try again.", variant: "destructive" });
+      toast({ title: "Error", description: e.message || "Failed to scan.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   const handleReset = () => {
-    setFile(null);
-    setResumeText("");
-    setFileBase64(null);
-    setFileName(null);
-    setJobDesc("");
-    setResult(null);
-    setStep("upload");
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "hsl(142, 71%, 45%)";
-    if (score >= 60) return "hsl(38, 92%, 50%)";
-    return "hsl(0, 84%, 60%)";
+    setFile(null); setResumeText(""); setFileBase64(null); setFileName(null);
+    setJobDesc(""); setResult(null); setStep("upload");
   };
 
   return (
@@ -133,271 +117,130 @@ export default function ATSScannerPage() {
       {!result && !loading && (
         <div className="max-w-2xl mx-auto mb-8">
           <div className="flex items-center justify-center gap-3">
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${step === "upload" ? "gradient-btn" : "bg-accent text-accent-foreground"}`}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${step === "upload" ? "gradient-btn" : "bg-accent text-accent-foreground"}`}
+            >
               <span className="w-5 h-5 rounded-full bg-primary-foreground/20 flex items-center justify-center text-xs font-bold">1</span>
               Upload Resume
-            </div>
+            </motion.div>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${step === "jobdesc" ? "gradient-btn" : "bg-muted text-muted-foreground"}`}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${step === "jobdesc" ? "gradient-btn" : "bg-muted text-muted-foreground"}`}
+            >
               <span className="w-5 h-5 rounded-full bg-primary-foreground/20 flex items-center justify-center text-xs font-bold">2</span>
               Job Description
-            </div>
+            </motion.div>
           </div>
         </div>
       )}
 
-      {/* Step 1: Upload Resume */}
-      {step === "upload" && !result && !loading && (
-        <AnimatedSection className="max-w-2xl mx-auto space-y-5">
-          <div
-            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
-            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
-            onDrop={handleDrop}
-            onClick={() => { const input = document.getElementById("ats-file-input") as HTMLInputElement; input?.click(); }}
-            className={`relative glass-card rounded-3xl p-16 text-center cursor-pointer card-hover border-2 border-dashed transition-all group ${
-              isDragging ? "border-primary bg-primary/5 scale-[1.02]" : "border-border hover:border-primary/40"
-            }`}
-          >
-            <input
-              id="ats-file-input"
-              type="file"
-              accept=".pdf,.txt,.doc,.docx"
-              className="hidden"
-              onChange={(e) => { handleFile(e.target.files?.[0] || null); e.target.value = ""; }}
-            />
-            <div className={`w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center mx-auto mb-5 transition-transform ${isDragging ? "scale-125" : "group-hover:scale-110"}`}>
-              <Upload className="h-8 w-8" />
-            </div>
-            <h3 className="font-display font-semibold text-xl mb-2">{isDragging ? "Drop your file here!" : "Drag & Drop your Resume"}</h3>
-            <p className="text-muted-foreground text-sm mb-4">or click to browse files</p>
-            <span className="inline-block px-3 py-1 rounded-lg bg-accent text-accent-foreground text-xs font-medium">TXT, PDF, DOC supported</span>
-          </div>
-
-          <div className="text-center">
-            <p className="text-muted-foreground text-sm mb-3">or paste your resume text directly</p>
-            <button
-              onClick={() => setStep("jobdesc")}
-              className="text-sm font-medium text-primary hover:underline"
+      {/* Step 1: Upload */}
+      <AnimatePresence mode="wait">
+        {step === "upload" && !result && !loading && (
+          <AnimatedSection key="upload" className="max-w-2xl mx-auto space-y-5">
+            <motion.div
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
+              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
+              onDrop={handleDrop}
+              onClick={() => (document.getElementById("ats-file-input") as HTMLInputElement)?.click()}
+              whileHover={{ scale: 1.01 }}
+              className={`relative glass-card rounded-3xl p-16 text-center cursor-pointer border-2 border-dashed transition-all group ${
+                isDragging ? "border-primary bg-primary/5 scale-[1.02]" : "border-border hover:border-primary/40"
+              }`}
             >
-              Skip to paste text →
-            </button>
-          </div>
-        </AnimatedSection>
-      )}
+              <input id="ats-file-input" type="file" accept=".pdf,.txt,.doc,.docx" className="hidden"
+                onChange={(e) => { handleFile(e.target.files?.[0] || null); e.target.value = ""; }} />
+              
+              {/* Hover flash overlay */}
+              <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{ background: "radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsla(258, 90%, 62%, 0.08), transparent 40%)" }} />
 
-      {/* Step 2: Job Description */}
-      {step === "jobdesc" && !result && !loading && (
-        <AnimatedSection className="max-w-2xl mx-auto space-y-5">
-          {file && (
-            <div className="glass-card rounded-2xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
-                <FileText className="h-5 w-5 text-accent-foreground" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{file.name}</p>
-                <p className="text-xs text-muted-foreground">Resume uploaded successfully</p>
-              </div>
-              <CheckCircle className="h-5 w-5" style={{ color: "hsl(142, 71%, 45%)" }} />
-            </div>
-          )}
-
-          {!file && (
-            <div className="glass-card rounded-2xl p-6">
-              <label className="block font-semibold mb-2 text-sm">Paste Your Resume Text</label>
-              <textarea
-                value={resumeText}
-                onChange={(e) => setResumeText(e.target.value)}
-                rows={5}
-                className="w-full rounded-xl bg-muted p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Paste your resume content here..."
-              />
-            </div>
-          )}
-
-          <div className="glass-card rounded-2xl p-6">
-            <label className="block font-semibold mb-2 text-sm">Paste Job Description</label>
-            <textarea
-              value={jobDesc}
-              onChange={(e) => setJobDesc(e.target.value)}
-              rows={6}
-              className="w-full rounded-xl bg-muted p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
-              placeholder="Paste the full job description here to compare against your resume..."
-            />
-          </div>
-
-          <button
-            onClick={handleScan}
-            disabled={!jobDesc.trim() || !resumeText.trim()}
-            className="w-full gradient-btn py-4 rounded-2xl font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            <Search className="h-4 w-4" /> Scan for ATS Compatibility
-          </button>
-        </AnimatedSection>
-      )}
-
-      {/* Loading */}
-      {loading && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 max-w-md mx-auto">
-          {/* Animated rings */}
-          <div className="relative w-32 h-32 mx-auto mb-8">
-            <motion.div
-              className="absolute inset-0 rounded-full border-4 border-primary/20"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-              className="absolute inset-2 rounded-full border-4 border-primary/30"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-            />
-            <motion.div
-              className="absolute inset-4 rounded-full border-4 border-primary/40"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              style={{ borderTopColor: "transparent", borderRightColor: "transparent" }}
-            />
-            <motion.div
-              className="absolute inset-0 flex items-center justify-center"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <div className="w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center">
-                <Search className="h-7 w-7" />
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.h3
-            className="font-display font-semibold text-xl mb-3"
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            Scanning with AI...
-          </motion.h3>
-
-          {/* Animated progress steps */}
-          <div className="space-y-2 text-left mt-6">
-            {["Extracting resume content", "Matching keywords", "Analyzing ATS compatibility", "Generating suggestions"].map((step, i) => (
               <motion.div
-                key={step}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 1.2 }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-muted/50"
+                className={`w-16 h-16 rounded-2xl gradient-btn flex items-center justify-center mx-auto mb-5 transition-transform ${isDragging ? "scale-125" : ""}`}
+                whileHover={{ rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 0.5 }}
               >
-                <motion.div
-                  className="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center"
-                  animate={{ backgroundColor: ["hsla(258,90%,62%,0)", "hsla(258,90%,62%,1)"] }}
-                  transition={{ delay: i * 1.2 + 0.8, duration: 0.3 }}
-                >
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: i * 1.2 + 0.8 }}
-                    className="w-2 h-2 rounded-full bg-primary-foreground"
-                  />
-                </motion.div>
-                <span className="text-sm text-muted-foreground">{step}</span>
+                <Upload className="h-8 w-8" />
               </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+              <h3 className="font-display font-semibold text-xl mb-2">{isDragging ? "Drop your file here!" : "Drag & Drop your Resume"}</h3>
+              <p className="text-muted-foreground text-sm mb-4">or click to browse files</p>
+              <span className="inline-block px-3 py-1 rounded-lg bg-accent text-accent-foreground text-xs font-medium">TXT, PDF, DOC supported</span>
+            </motion.div>
 
-      {/* Results */}
-      <AnimatePresence>
+            <div className="text-center">
+              <p className="text-muted-foreground text-sm mb-3">or paste your resume text directly</p>
+              <button onClick={() => setStep("jobdesc")} className="text-sm font-medium text-primary hover:underline">Skip to paste text →</button>
+            </div>
+          </AnimatedSection>
+        )}
+
+        {/* Step 2: Job Description */}
+        {step === "jobdesc" && !result && !loading && (
+          <AnimatedSection key="jobdesc" className="max-w-2xl mx-auto space-y-5">
+            {file && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                className="glass-card rounded-2xl p-4 flex items-center gap-3 group hover:border-primary/20 border border-transparent transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-accent-foreground" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">Resume uploaded</p>
+                </div>
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              </motion.div>
+            )}
+
+            {!file && (
+              <div className="glass-card rounded-2xl p-6">
+                <label className="block font-semibold mb-2 text-sm">Paste Your Resume Text</label>
+                <textarea value={resumeText} onChange={(e) => setResumeText(e.target.value)} rows={5}
+                  className="w-full rounded-xl bg-muted p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  placeholder="Paste your resume content here..." />
+              </div>
+            )}
+
+            <div className="glass-card rounded-2xl p-6">
+              <label className="block font-semibold mb-2 text-sm">Paste Job Description</label>
+              <textarea value={jobDesc} onChange={(e) => setJobDesc(e.target.value)} rows={6}
+                className="w-full rounded-xl bg-muted p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Paste the full job description here..." />
+            </div>
+
+            <motion.button
+              onClick={handleScan}
+              disabled={!jobDesc.trim() || !resumeText.trim()}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full gradient-btn py-4 rounded-2xl font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              <Search className="h-4 w-4" /> Scan for ATS Compatibility
+            </motion.button>
+          </AnimatedSection>
+        )}
+
+        {/* Loading */}
+        {loading && <ATSScanningAnimation key="loading" />}
+
+        {/* Results */}
         {result && !loading && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6 mt-4">
-            {/* Score Card */}
-            <div className="glass-card rounded-3xl p-8 sm:p-10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{ background: `radial-gradient(circle, ${getScoreColor(result.score)}, transparent)` }} />
-              <div className="flex flex-col sm:flex-row items-center gap-8 relative">
-                <ScoreCircle score={result.score} size={170} />
-                <div className="flex-1 text-center sm:text-left">
-                  <h3 className="font-display font-bold text-2xl mb-2">ATS Compatibility Score</h3>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {result.score >= 80
-                      ? "Excellent! Your resume is highly optimized for this position."
-                      : result.score >= 60
-                      ? "Good match, but there are opportunities to improve keyword alignment."
-                      : "Your resume needs significant optimization for this job posting."}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                      result.score >= 80 ? "bg-green-500/10 text-green-600" : result.score >= 60 ? "bg-amber-500/10 text-amber-600" : "bg-red-500/10 text-red-600"
-                    }`}>
-                      {result.score >= 80 ? "✓ ATS Optimized" : result.score >= 60 ? "⚠ Partially Optimized" : "✗ Needs Optimization"}
-                    </span>
-                    {file && (
-                      <span className="px-3 py-1.5 rounded-lg bg-accent text-accent-foreground text-xs font-medium flex items-center gap-1">
-                        <FileText className="h-3 w-3" /> {file.name}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+          <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto space-y-6 mt-4">
+            <ATSScoreReveal score={result.score} matchedCount={result.matchedKeywords.length} missingCount={result.missingKeywords.length} />
+            <ATSKeywordsGrid matchedKeywords={result.matchedKeywords} missingKeywords={result.missingKeywords} />
+            <ATSSuggestions suggestions={result.suggestions} />
 
-            {/* Keywords Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 flex items-center gap-2" style={{ background: "linear-gradient(135deg, hsla(142, 71%, 45%, 0.1), hsla(142, 71%, 45%, 0.05))" }}>
-                  <CheckCircle className="h-5 w-5" style={{ color: "hsl(142, 71%, 45%)" }} />
-                  <h3 className="font-display font-semibold" style={{ color: "hsl(142, 71%, 45%)" }}>Matched Keywords ({result.matchedKeywords.length})</h3>
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2">
-                    {result.matchedKeywords.map((k) => (
-                      <span key={k} className="px-3 py-1.5 rounded-lg text-sm font-medium bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">{k}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 flex items-center gap-2" style={{ background: "linear-gradient(135deg, hsla(25, 95%, 53%, 0.1), hsla(25, 95%, 53%, 0.05))" }}>
-                  <AlertTriangle className="h-5 w-5" style={{ color: "hsl(25, 95%, 53%)" }} />
-                  <h3 className="font-display font-semibold" style={{ color: "hsl(25, 95%, 53%)" }}>Missing Keywords ({result.missingKeywords.length})</h3>
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-wrap gap-2">
-                    {result.missingKeywords.map((k) => (
-                      <span key={k} className="px-3 py-1.5 rounded-lg text-sm font-medium bg-orange-500/10 text-orange-700 dark:text-orange-400 border border-orange-500/20">{k}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Suggestions */}
-            <div className="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-20" style={{ background: "radial-gradient(circle, hsla(258, 90%, 62%, 0.15), transparent)" }} />
-              <h3 className="font-display font-semibold text-lg mb-5 flex items-center gap-2 relative">
-                <span className="w-8 h-8 rounded-lg gradient-btn flex items-center justify-center"><Lightbulb className="h-4 w-4" /></span>
-                Optimization Suggestions
-              </h3>
-              <div className="space-y-3 relative">
-                {result.suggestions.map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="flex items-start gap-4 p-4 rounded-2xl bg-muted/50 hover:bg-accent/30 transition-colors"
-                  >
-                    <span className="w-7 h-7 rounded-lg gradient-btn flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                    <p className="text-sm leading-relaxed">{s}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button onClick={handleReset} className="flex-1 py-3 rounded-2xl font-semibold text-sm bg-muted text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }} className="pt-2">
+              <motion.button
+                onClick={handleReset}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3.5 rounded-2xl font-semibold text-sm bg-muted text-foreground hover:bg-accent transition-colors flex items-center justify-center gap-2"
+              >
                 <Upload className="h-4 w-4" /> Scan Another Resume
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
