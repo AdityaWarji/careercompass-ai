@@ -7,6 +7,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { AuthProvider } from "@/contexts/AuthContext";
 import HeaderNav from "@/components/HeaderNav";
+import { useAuth } from "@/contexts/AuthContext";
+import GreetingBadge from "@/components/GreetingBadge";
 import Index from "./pages/Index";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import ATSScanner from "./pages/ATSScanner";
@@ -42,7 +44,10 @@ const App = () => (
                     </div>
                     <span className="font-display font-bold text-sm gradient-text">CareerCompass AI</span>
                   </div>
-                  <HeaderNav />
+                  <div className="flex items-center gap-3">
+                    <GreetingBadge />
+                    <HeaderNav />
+                  </div>
                 </header>
                 <main className="flex-1">
                   <Routes>
