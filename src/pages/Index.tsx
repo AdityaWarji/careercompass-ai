@@ -119,20 +119,20 @@ export default function HomePage() {
           }} />
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-36">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-36">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-400/20 backdrop-blur-md text-primary-foreground/90 text-sm font-medium mb-8 shadow-[0_0_30px_-4px_hsla(258,90%,62%,0.3)]"
+              className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-400/20 backdrop-blur-md text-primary-foreground/90 text-xs sm:text-sm font-medium mb-6 sm:mb-8 shadow-[0_0_30px_-4px_hsla(258,90%,62%,0.3)]"
             >
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400 shadow-[0_0_8px_2px_hsla(145,80%,55%,0.5)]" />
+                <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-400 shadow-[0_0_8px_2px_hsla(145,80%,55%,0.5)]" />
               </span>
-              <span className="tracking-wide">Powered by Google Gemini AI</span>
-              <Sparkles className="h-3.5 w-3.5 text-purple-300 animate-pulse" />
+              <span className="tracking-wide">Powered by Gemini AI</span>
+              <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-purple-300 animate-pulse" />
             </motion.div>
 
             <TextReveal>
