@@ -18,6 +18,9 @@ interface Prediction {
   reason: string;
   key_skills_matched: string[];
   skills_to_learn: string[];
+  top_companies?: string[];
+  job_openings_estimate?: string;
+  growth_outlook?: string;
 }
 
 const popularSkills = [
