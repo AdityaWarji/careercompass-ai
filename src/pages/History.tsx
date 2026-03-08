@@ -54,7 +54,7 @@ export default function HistoryPage() {
         <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h2 className="font-display text-2xl font-bold mb-2">Sign in to view history</h2>
         <p className="text-muted-foreground mb-6">Your activity history is saved when you're signed in.</p>
-        <Link to="/auth" className="gradient-btn px-6 py-3 rounded-xl font-semibold text-sm inline-flex items-center gap-2">
+        <Link to="/" className="gradient-btn px-6 py-3 rounded-xl font-semibold text-sm inline-flex items-center gap-2">
           Sign In <ChevronRight className="h-4 w-4" />
         </Link>
       </div>

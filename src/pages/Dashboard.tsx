@@ -91,7 +91,7 @@ export default function DashboardPage() {
                   : "Create an account to save your analysis results and track your career progress over time."}
               </p>
               <Link
-                to={user ? "/resume-analyzer" : "/auth"}
+                to="/resume-analyzer"
                 className="inline-flex items-center gap-2 gradient-btn px-6 py-3 rounded-xl font-semibold text-sm relative"
               >
                 {user ? "Analyze Resume" : "Sign In"} <ArrowRight className="h-4 w-4" />

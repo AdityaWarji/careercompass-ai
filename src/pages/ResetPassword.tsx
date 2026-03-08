@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
                 This page is used to set a new password after clicking the reset link in your email. If you haven't requested a reset, go back to sign in.
               </p>
               <button
-                onClick={() => navigate("/auth")}
+                onClick={() => navigate("/")}
                 className="inline-flex items-center gap-2 gradient-btn px-6 py-3 rounded-xl font-semibold text-sm"
               >
                 Go to Sign In <ArrowRight className="h-4 w-4" />
