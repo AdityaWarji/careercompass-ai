@@ -399,14 +399,26 @@ export default function CareerRoadmapPage() {
                                   <ExternalLink className="h-3 w-3" /> {r}
                                 </span>
                               ))}
-                              <a
-                                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(topic.youtubeSearch)}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs bg-destructive/10 text-destructive px-2 py-1 rounded-md flex items-center gap-1 hover:bg-destructive/20 transition-colors"
-                              >
-                                <Youtube className="h-3 w-3" /> YouTube
-                              </a>
+                            </div>
+                            {/* YouTube links in 3 languages */}
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {[
+                                { lang: "English", flag: "🇬🇧", suffix: " tutorial english" },
+                                { lang: "Hindi", flag: "🇮🇳", suffix: " tutorial hindi" },
+                                { lang: "Spanish", flag: "🇪🇸", suffix: " tutorial español" },
+                              ].map((l) => (
+                                <a
+                                  key={l.lang}
+                                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(topic.youtubeSearch + l.suffix)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs bg-destructive/10 text-destructive px-2.5 py-1 rounded-md flex items-center gap-1.5 hover:bg-destructive/20 transition-colors"
+                                >
+                                  <Youtube className="h-3 w-3" />
+                                  <span>{l.flag}</span>
+                                  <span>{l.lang}</span>
+                                </a>
+                              ))}
                             </div>
                           </div>
                         ))}
