@@ -314,10 +314,6 @@ export default function CareerRoadmapPage() {
               <p className="text-muted-foreground text-sm">No matching careers found. Try searching above — AI will find related career paths!</p>
             </div>
           )}
-                </AnimatedSection>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
