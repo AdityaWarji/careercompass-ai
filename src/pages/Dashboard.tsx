@@ -409,7 +409,7 @@ export default function DashboardPage() {
                     ];
                     const COLORS = ["hsl(258, 90%, 65%)", "hsl(220, 70%, 55%)", "hsl(170, 70%, 45%)"];
                     return (
-                      <div className="w-full flex items-center gap-6">
+                      <div className="w-full flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
                         <div className="flex-1" style={{ height: 200 }}>
                           <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
