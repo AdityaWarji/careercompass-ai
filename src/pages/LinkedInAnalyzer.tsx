@@ -63,15 +63,17 @@ export default function LinkedInAnalyzerPage() {
         },
       });
 
-      if (error) throw error;
-      if (data?.error) {
-        if (data.showManualInput) {
-          setShowManualInput(true);
-          toast.info("LinkedIn limits public access. Please paste your profile content below and try again.", { duration: 6000 });
-          return;
-        }
-        throw new Error(data.error);
+      // supabase.functions.invoke puts parsed body in `data` even on error status codes
+      if (data?.showManualInput) {
+        setShowManualInput(true);
+        toast.info("LinkedIn limits public access. Please paste your profile content below and try again.", { duration: 6000 });
+        return;
       }
+      if (error) {
+        const msg = data?.error || error.message || "Analysis failed";
+        throw new Error(msg);
+      }
+      if (data?.error) throw new Error(data.error);
       if (!data?.data) throw new Error("No analysis returned");
 
       setResult(data.data);
