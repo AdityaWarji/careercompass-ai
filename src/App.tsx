@@ -49,6 +49,7 @@ const App = () => (
                   </div>
                   <div className="flex items-center gap-3">
                     <GreetingBadge />
+                    <NotificationBell />
                     <HeaderNav />
                   </div>
                 </header>
