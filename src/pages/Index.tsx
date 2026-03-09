@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
-import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Zap, Users, ChevronRight, Star, Shield, Clock, Award } from "lucide-react";
+import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Zap, Users, ChevronRight, Star, Shield, Clock, Award, Send, MessageSquare } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TextReveal from "@/components/TextReveal";
 import TypingText from "@/components/TypingText";
@@ -8,6 +8,10 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 import MagneticButton from "@/components/MagneticButton";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useRef, useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const features = [
   { icon: FileText, title: "Resume Analyzer", desc: "AI-powered resume scoring with actionable improvement tips.", link: "/resume-analyzer", color: "from-violet-500 to-purple-600", glow: "hsla(258, 90%, 62%, 0.4)" },
@@ -25,12 +29,6 @@ const steps = [
   { icon: GraduationCap, num: "04", title: "Interview Prep", desc: "Practice with AI-powered mock interviews", link: "/interview-coach" },
 ];
 
-const testimonials = [
-  { name: "Sarah K.", role: "Software Engineer", text: "Landed my dream job at a FAANG company!", rating: 5 },
-  { name: "Mike R.", role: "Product Manager", text: "The ATS scanner saved me weeks of guessing.", rating: 5 },
-  { name: "Priya S.", role: "Data Scientist", text: "Interview coach prepared me for every question.", rating: 5 },
-  { name: "James L.", role: "UX Designer", text: "Career prediction was spot-on accurate!", rating: 5 },
-];
 
 function FlashCard({ f, i }: { f: typeof features[0]; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -177,38 +175,171 @@ function MarqueeBar() {
   );
 }
 
-function TestimonialCard({ t, i }: { t: typeof testimonials[0]; i: number }) {
+
+interface FeedbackItem {
+  id: string;
+  name: string;
+  role: string | null;
+  message: string;
+  rating: number;
+  created_at: string;
+}
+
+function FeedbackSection() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [message, setMessage] = useState("");
+  const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: feedbacks = [] } = useQuery({
+    queryKey: ["feedbacks"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("feedback")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(12);
+      if (error) throw error;
+      return data as FeedbackItem[];
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) { toast.error("Please sign in to leave feedback"); return; }
+    if (!name.trim() || !message.trim()) { toast.error("Name and message are required"); return; }
+    setSubmitting(true);
+    const { error } = await supabase.from("feedback").insert({
+      user_id: user.id,
+      name: name.trim(),
+      role: role.trim() || null,
+      message: message.trim(),
+      rating,
+    });
+    setSubmitting(false);
+    if (error) { toast.error("Failed to submit feedback"); return; }
+    toast.success("Thank you for your feedback! 🎉");
+    setName(""); setRole(""); setMessage(""); setRating(5);
+    queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+  };
+
   return (
-    <AnimatedSection delay={i * 0.15}>
-      <motion.div
-        whileHover={{ y: -8, scale: 1.02 }}
-        className="glass-card-premium rounded-2xl p-6 h-full group cursor-default"
-      >
-        <div className="flex gap-1 mb-3">
-          {Array.from({ length: t.rating }).map((_, j) => (
+    <section className="section-padding bg-background relative overflow-hidden">
+      <div className="max-w-6xl mx-auto relative z-10">
+        <AnimatedSection className="text-center mb-14">
+          <span className="floating-badge mb-4 inline-flex">
+            <MessageSquare className="h-3.5 w-3.5" /> Feedback
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            What Users <span className="gradient-text">Say</span>
+          </h2>
+          <p className="text-muted-foreground max-w-md mx-auto">Real feedback from real users of CareerCompass AI.</p>
+        </AnimatedSection>
+
+        {feedbacks.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+            {feedbacks.map((fb, i) => (
+              <AnimatedSection key={fb.id} delay={i * 0.1}>
+                <motion.div
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  className="group glass-card-premium rounded-2xl p-6 h-full cursor-default relative overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    style={{ background: "linear-gradient(105deg, transparent 40%, hsla(258,90%,62%,0.06) 45%, transparent 55%)" }}
+                  />
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: fb.rating }).map((_, j) => (
+                      <motion.div
+                        key={j}
+                        initial={{ opacity: 0, scale: 0, rotate: -90 }}
+                        whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 + j * 0.08, type: "spring", stiffness: 300 }}
+                      >
+                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      </motion.div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-foreground/80 mb-4 leading-relaxed italic">"{fb.message}"</p>
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-xs font-bold shadow-md">
+                      {fb.name[0]?.toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{fb.name}</p>
+                      {fb.role && <p className="text-xs text-muted-foreground">{fb.role}</p>}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        ) : (
+          <AnimatedSection>
+            <div className="text-center py-12 mb-16">
+              <MessageSquare className="h-10 w-10 text-muted-foreground/20 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No feedback yet. Be the first to share!</p>
+            </div>
+          </AnimatedSection>
+        )}
+
+        <AnimatedSection delay={0.2}>
+          <motion.div className="max-w-xl mx-auto glass-card-premium rounded-3xl p-8 relative overflow-hidden" whileHover={{ y: -2 }}>
             <motion.div
-              key={j}
-              initial={{ opacity: 0, scale: 0 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 + j * 0.1, type: "spring" }}
-            >
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            </motion.div>
-          ))}
-        </div>
-        <p className="text-sm text-foreground/80 mb-4 leading-relaxed italic">"{t.text}"</p>
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-xs font-bold">
-            {t.name[0]}
-          </div>
-          <div>
-            <p className="text-sm font-semibold">{t.name}</p>
-            <p className="text-xs text-muted-foreground">{t.role}</p>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatedSection>
+              className="absolute -top-20 left-1/2 -translate-x-1/2 w-60 h-60 rounded-full pointer-events-none"
+              style={{ background: "radial-gradient(circle, hsla(258, 90%, 62%, 0.08), transparent 70%)" }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+            <h3 className="font-display text-xl font-bold text-center mb-1 relative">Leave Your Feedback</h3>
+            <p className="text-xs text-muted-foreground text-center mb-6 relative">Share your experience with CareerCompass AI</p>
+            <form onSubmit={handleSubmit} className="space-y-4 relative">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input type="text" placeholder="Your Name *" value={name} onChange={(e) => setName(e.target.value)} className="premium-input" required />
+                <input type="text" placeholder="Your Role (optional)" value={role} onChange={(e) => setRole(e.target.value)} className="premium-input" />
+              </div>
+              <textarea placeholder="Share your experience... *" value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className="premium-input resize-none" required />
+              <div className="flex items-center gap-1 justify-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <motion.button
+                    key={star} type="button" whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}
+                    onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star)} className="p-1"
+                  >
+                    <Star className={`h-6 w-6 transition-colors duration-200 ${star <= (hoverRating || rating) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                  </motion.button>
+                ))}
+              </div>
+              <MagneticButton strength={0.1}>
+                <motion.button
+                  type="submit" disabled={submitting || !user} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  className="w-full relative overflow-hidden inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm text-primary-foreground shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  <motion.div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(105deg, transparent 40%, hsla(0,0%,100%,0.2) 45%, hsla(0,0%,100%,0.05) 50%, transparent 55%)" }}
+                    animate={{ x: ["-200%", "200%"] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  />
+                  <Send className="h-4 w-4 relative z-10" />
+                  <span className="relative z-10">{submitting ? "Submitting..." : "Submit Feedback"}</span>
+                </motion.button>
+              </MagneticButton>
+              {!user && (
+                <p className="text-xs text-center text-muted-foreground">
+                  <Link to="/auth" className="text-primary hover:underline">Sign in</Link> to leave feedback
+                </p>
+              )}
+            </form>
+          </motion.div>
+        </AnimatedSection>
+      </div>
+    </section>
   );
 }
 
@@ -529,26 +660,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="section-padding bg-background relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative z-10">
-          <AnimatedSection className="text-center mb-14">
-            <span className="floating-badge mb-4 inline-flex">
-              <Star className="h-3.5 w-3.5" /> Testimonials
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Loved by <span className="gradient-text">Professionals</span>
-            </h2>
-            <p className="text-muted-foreground max-w-md mx-auto">See what our users have to say about their experience.</p>
-          </AnimatedSection>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {testimonials.map((t, i) => (
-              <TestimonialCard key={t.name} t={t} i={i} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* User Feedback */}
+      <FeedbackSection />
 
       {/* CTA */}
       <section className="section-padding">
