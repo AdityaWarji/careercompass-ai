@@ -550,16 +550,6 @@ export default function DashboardPage() {
                               return null;
                             }}
                           />
-                          {barData.map((_, idx) => (
-                            <Bar
-                              key={idx}
-                              dataKey="count"
-                              radius={[8, 8, 0, 0]}
-                              animationDuration={1500}
-                              animationBegin={400 + idx * 150}
-                              animationEasing="ease-out"
-                            />
-                          ))}
                           <Bar
                             dataKey="count"
                             radius={[8, 8, 0, 0]}
@@ -567,7 +557,7 @@ export default function DashboardPage() {
                             animationBegin={400}
                             animationEasing="ease-out"
                           >
-                            {barData.map((_, index) => {
+                            {barData.map((entry, index) => {
                               const fills = ["url(#barGrad0)", "url(#barGrad1)", "url(#barGrad2)", "url(#barGrad3)"];
                               return <motion.rect key={index} fill={fills[index]} />;
                             })}
