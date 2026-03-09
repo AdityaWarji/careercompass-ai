@@ -1,73 +1,150 @@
-# Welcome to your Lovable project
+# 🚀 CareerCompassAI
 
-## Project info
+**CareerCompassAI** is an AI-powered career guidance platform that helps students and professionals discover the best career paths based on their skills, interests, and goals.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+The platform uses Artificial Intelligence, Machine Learning, and Generative AI to analyze user profiles, recommend career paths, identify skill gaps, and generate personalized learning roadmaps.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🌟 Features
 
-**Use Lovable**
+### 🤖 AI Career Path Recommendation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Users enter their skills, interests, and education, and the AI recommends the most suitable career paths.
 
-Changes made via Lovable will be committed automatically to this repo.
+### 📊 Skill Gap Analysis
 
-**Use your preferred IDE**
+The system compares user skills with industry requirements and identifies missing skills needed for target careers.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🧠 Personalized Learning Roadmap
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Generates a step-by-step roadmap showing what skills to learn and in what order.
 
-Follow these steps:
+### 📄 Resume Analyzer
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Analyzes uploaded resumes and provides:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+* ATS score
+* missing skills
+* improvement suggestions
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 💼 Job Recommendation Engine
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Suggests job roles based on user skills and experience.
+
+### 🎤 AI Career Mentor
+
+Users can interact with an AI mentor to ask career-related questions and receive guidance.
+
+### 📈 Career Market Insights
+
+Displays trending skills, emerging careers, and job market demand using data visualization.
+
+---
+
+## 🧠 How It Works
+
+1. User enters skills and career interests.
+2. AI analyzes the profile.
+3. Machine learning models compare user skills with industry trends.
+4. The platform generates career recommendations and learning roadmaps.
+5. Users receive guidance to achieve their target career path.
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+* React
+* Next.js
+* Tailwind CSS
+* Framer Motion
+
+### Backend
+
+* Python
+* FastAPI
+
+### AI / ML
+
+* Machine Learning models
+* Generative AI
+* NLP for resume analysis
+
+### Database
+
+* PostgreSQL / Supabase
+
+---
+
+## 🧑‍💻 Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/AdityaWarji/careercompass-ai.git
+```
+
+Navigate into the project folder:
+
+```bash
+cd careercompass-ai
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📸 Project Screenshots
 
-**Use GitHub Codespaces**
+(Add screenshots of your platform here)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Example sections:
 
-## What technologies are used for this project?
+* Dashboard
+* Career recommendations
+* Skill gap analysis
+* AI mentor chat
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Future Improvements
 
-## How can I deploy this project?
+* AI interview preparation
+* salary prediction
+* GitHub portfolio analysis
+* AI career success probability
+* real-time job market analytics
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🤝 Contributing
 
-Yes, you can!
+Contributions are welcome!
+Feel free to fork the repository and submit a pull request.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**Aditya Warji**
+
+GitHub:
+https://github.com/AdityaWarji
