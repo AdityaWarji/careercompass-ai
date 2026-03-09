@@ -106,8 +106,11 @@ npm run dev
 
 ---
 
-## 📸 Project Demo
+## 🎥 Demo Video
 
+Watch CareerCompassAI in action:
+
+[Click here to watch the demo](demo.mp4)
 
 ---
 
