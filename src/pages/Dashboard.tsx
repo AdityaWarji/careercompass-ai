@@ -327,14 +327,14 @@ export default function DashboardPage() {
                 style={{ height: 220 }}
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailyTimeData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <BarChart data={dailyTimeData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
                     <defs>
-                      <linearGradient id="timeGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <linearGradient id="timeBarGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} vertical={false} />
                     <XAxis
                       dataKey="day"
                       tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
@@ -348,24 +348,15 @@ export default function DashboardPage() {
                       unit=" min"
                     />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area
-                      type="monotone"
+                    <Bar
                       dataKey="minutes"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={3}
-                      fill="url(#timeGradient)"
-                      dot={{ r: 5, fill: "hsl(var(--primary))", stroke: "hsl(var(--background))", strokeWidth: 2 }}
-                      activeDot={{
-                        r: 7,
-                        fill: "hsl(var(--primary))",
-                        stroke: "hsl(var(--primary))",
-                        strokeWidth: 3,
-                        strokeOpacity: 0.3,
-                      }}
-                      animationDuration={1800}
+                      fill="url(#timeBarGradient)"
+                      radius={[8, 8, 0, 0]}
+                      animationDuration={1500}
+                      animationBegin={300}
                       animationEasing="ease-out"
                     />
-                  </AreaChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </motion.div>
 
