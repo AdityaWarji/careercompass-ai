@@ -1,14 +1,14 @@
 # 🚀 CareerCompassAI
 
-AI-powered career guidance platform that helps students and professionals discover the best career paths based on their **skills, interests, and goals** using **Artificial Intelligence, Machine Learning, and Generative AI**.
+**CareerCompassAI** is an AI-powered career guidance platform that helps students and professionals discover the best career paths based on their **skills, interests, and goals** using **Artificial Intelligence, Machine Learning, and Generative AI**.
 
 ---
 
 ## 🎥 Demo
 
-Watch CareerCompassAI in action:
+Watch **CareerCompassAI** in action 👇
 
-[▶ Watch Demo Video](careercompass-demo.mp4)
+<video src="careercompass-demo.mp4" controls width="900"></video>
 
 ---
 
@@ -31,8 +31,8 @@ Generates a **step-by-step roadmap** showing what skills to learn and in what or
 Upload a resume and the system analyzes:
 
 * ATS compatibility score
-* missing skills
-* improvement suggestions
+* Missing skills
+* Improvement suggestions
 
 ### 💼 Job Recommendation Engine
 
@@ -50,11 +50,11 @@ Displays **trending skills, emerging careers, and job market demand** using inte
 
 ## 🧠 How It Works
 
-1. User enters skills and career interests
-2. AI analyzes the user profile
-3. Machine learning models compare skills with industry trends
-4. The system generates career recommendations
-5. Users receive a personalized learning roadmap
+1. User enters **skills and career interests**
+2. AI analyzes the **user profile**
+3. Machine learning models compare skills with **industry trends**
+4. The system generates **career recommendations**
+5. Users receive a **personalized learning roadmap**
 
 ---
 
@@ -74,9 +74,9 @@ Displays **trending skills, emerging careers, and job market demand** using inte
 
 ### AI / ML
 
-* Machine Learning models
+* Machine Learning Models
 * Generative AI
-* NLP for resume analysis
+* NLP for Resume Analysis
 
 ### Database
 
@@ -130,11 +130,11 @@ npm run dev
 
 ## 🚀 Future Improvements
 
-* AI interview preparation system
-* Salary prediction using ML
-* GitHub portfolio analysis
-* AI career success probability prediction
-* Real-time job market analytics
+* AI Interview Preparation System
+* Salary Prediction using Machine Learning
+* GitHub Portfolio Analysis
+* AI Career Success Probability Prediction
+* Real-time Job Market Analytics
 
 ---
 
