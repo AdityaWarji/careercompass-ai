@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
-import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Zap, Users, ChevronRight, Star, Shield, Clock, Award } from "lucide-react";
+import { FileText, Search, Brain, TrendingUp, Compass, ArrowRight, Sparkles, Upload, Target, GraduationCap, Mic, Zap, Users, ChevronRight, Star, Shield, Clock, Award, Send, MessageSquare } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import TextReveal from "@/components/TextReveal";
 import TypingText from "@/components/TypingText";
@@ -8,6 +8,10 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 import MagneticButton from "@/components/MagneticButton";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { useRef, useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const features = [
   { icon: FileText, title: "Resume Analyzer", desc: "AI-powered resume scoring with actionable improvement tips.", link: "/resume-analyzer", color: "from-violet-500 to-purple-600", glow: "hsla(258, 90%, 62%, 0.4)" },
