@@ -208,7 +208,25 @@ function FeedbackSection() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Real-time subscription for live feedback updates
+  useEffect(() => {
+    const channel = supabase
+      .channel("feedback-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "feedback" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["feedbacks"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+
     e.preventDefault();
     if (!user) { toast.error("Please sign in to leave feedback"); return; }
     if (!name.trim() || !message.trim()) { toast.error("Name and message are required"); return; }
