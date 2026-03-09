@@ -106,16 +106,8 @@ npm run dev
 
 ---
 
-## 📸 Project Screenshots
+## 📸 Project Demo
 
-(Add screenshots of your platform here)
-
-Example sections:
-
-* Dashboard
-* Career recommendations
-* Skill gap analysis
-* AI mentor chat
 
 ---
 
