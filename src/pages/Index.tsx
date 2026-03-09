@@ -226,7 +226,7 @@ function FeedbackSection() {
     };
   }, [queryClient]);
 
-
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) { toast.error("Please sign in to leave feedback"); return; }
     if (!name.trim() || !message.trim()) { toast.error("Name and message are required"); return; }
