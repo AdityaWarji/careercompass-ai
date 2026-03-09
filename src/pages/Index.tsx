@@ -29,12 +29,6 @@ const steps = [
   { icon: GraduationCap, num: "04", title: "Interview Prep", desc: "Practice with AI-powered mock interviews", link: "/interview-coach" },
 ];
 
-const testimonials = [
-  { name: "Sarah K.", role: "Software Engineer", text: "Landed my dream job at a FAANG company!", rating: 5 },
-  { name: "Mike R.", role: "Product Manager", text: "The ATS scanner saved me weeks of guessing.", rating: 5 },
-  { name: "Priya S.", role: "Data Scientist", text: "Interview coach prepared me for every question.", rating: 5 },
-  { name: "James L.", role: "UX Designer", text: "Career prediction was spot-on accurate!", rating: 5 },
-];
 
 function FlashCard({ f, i }: { f: typeof features[0]; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
